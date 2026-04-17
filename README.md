@@ -1,13 +1,12 @@
-# CRUD Admin Laravel Project
+# Aplikasi BMI - Admin Panel
 
-Proyek ini adalah sistem manajemen (Admin Panel) sederhana yang dibangun dengan Laravel 12, mengintegrasikan tema kustom dengan fitur Dark Mode dan dialog konfirmasi modern.
+Proyek ini adalah sistem manajemen **Kalkulator BMI (Body Mass Index)** yang dibangun dengan **Laravel 12**, dilengkapi dengan admin panel modern yang mendukung Dark Mode, RBAC (Role-Based Access Control), dan dialog konfirmasi interaktif.
 
 ## 🏗️ Arsitektur & Struktur Proyek
 
-Proyek ini mengikuti pola arsitektur **MVC (Model-View-Controller)** standar Laravel dengan beberapa penyesuaian untuk area admin:
+Proyek ini mengikuti pola arsitektur **MVC (Model-View-Controller)** standar Laravel dengan struktur admin yang terorganisir:
 
-- **Namespace Admin**: Controller admin dikelompokkan dalam `App\Http\Controllers\Admin` untuk pemisahan logika yang lebih bersih.
-- **Resourceful Routing**: Menggunakan `Route::resource` untuk manajemen produk.
+- **Namespace Admin**: Controller admin dikelompokkan dalam `App\Http\Controllers\Admin` untuk pemisahan logika yang bersih.
 - **Blade Templating**: Sistem layouting menggunakan `@extends`, `@section`, dan `@yield` untuk reusability komponen UI.
 - **Middleware Auth**: Mengamankan rute `/admin/*` menggunakan middleware `auth` bawaan Laravel.
 - **RBAC Layer**: Authorization menggunakan `spatie/laravel-permission` dengan guard `web`, permission granular per action, dan bypass penuh untuk role `super-admin`.
@@ -16,210 +15,75 @@ Proyek ini mengikuti pola arsitektur **MVC (Model-View-Controller)** standar Lar
 
 ### Backend
 - **Framework**: Laravel 12.x
-- **Database**: SQLite (Default, tersimpan di `database/database.sqlite`)
-- **PHP**: ^8.1
-- **Authorization**: [spatie/laravel-permission](https://spatie.be/docs/laravel-permission)
+- **Database**: SQLite (`database/database.sqlite`)
+- **PHP**: ^8.2
+- **Authorization**: [spatie/laravel-permission](https://spatie.be/docs/laravel-permission) ^6.9
+- **HTTP Client**: Guzzle ^7.2
+- **API Authentication**: Laravel Sanctum ^4.0
 
 ### Frontend
 - **CSS Framework**: [Tailwind CSS](https://tailwindcss.com/) (via CDN dengan konfigurasi kustom)
 - **Icons**: [Material Symbols Outlined](https://fonts.google.com/icons) (Google Fonts)
 - **Fonts**: Space Grotesk & Public Sans
 - **Dialog & Notifications**: [SweetAlert2](https://sweetalert2.github.io/)
+- **Build Tool**: Vite ^5.0 (untuk asset compilation)
 
 ## ⚙️ Konfigurasi Utama
 
-- **Dark Mode**: Implementasi menggunakan class-based dark mode Tailwind yang statusnya disimpan di `localStorage` browser.
-- **Permission Registry**: Semua permission inti didefinisikan terpusat di `App\Support\AccessControl`.
-- **Admin Navigation Layout**: Layout navigasi admin bisa dipilih lewat env `ADMIN_NAV_LAYOUT` dengan opsi `sidebar` atau `topbar`.
-- **Admin Login Layout**: Tampilan halaman login bisa dipilih lewat env `ADMIN_LOGIN_LAYOUT` dengan tiga model UI.
+### Environment Variables
 
-## 🔐 Dev Bypass Auth (Hanya Local)
+| Variable | Deskripsi | Default |
+|----------|-----------|---------|
+| `ADMIN_NAV_LAYOUT` | Layout navigasi admin (`sidebar` atau `topbar`) | `sidebar` |
+| `ADMIN_LOGIN_LAYOUT` | Tampilan halaman login (`panel`, `split`, `spotlight`) | `panel` |
+| `ADMIN_DEFAULT_EMAIL` | Email admin default | `admin@example.com` |
+| `ADMIN_DEFAULT_PASSWORD` | Password admin default (digenerate random) | - |
+| `AGENT_LOGIN_TOKEN` | Token bypass auth untuk development | - |
 
-Untuk memudahkan agent melakukan pengecekan URL yang membutuhkan autentikasi saat pengembangan lokal, proyek ini mendukung bypass auth berbasis header rahasia:
-
-- Set variabel pada `.env`: `AGENT_LOGIN_TOKEN=<token_rahasia>`
-- Kirim header pada request: `x-login-token: <token_rahasia>`
-- Middleware akan otomatis melakukan login sebagai user pertama yang tersedia.
-- Fitur ini HANYA aktif pada environment `local`.
-
-Catatan: Agent tool akan mengisi `AGENT_LOGIN_TOKEN` secara otomatis saat scaffolding proyek dan menyertakan header tersebut saat melakukan pengecekan URL dari tool internal.
-- **Database**: Dikonfigurasi di file `.env` menggunakan `DB_CONNECTION=sqlite`.
-- **Auth Guard**: Menggunakan guard `web` standar dengan redirect login kustom ke `/admin/login`.
-- **Route Provider**: `HOME` path diubah ke `/admin/dashboard` di `App\Providers\RouteServiceProvider`.
-
-### Navigation Layout via ENV
+### Navigation Layout
 
 Admin panel mendukung dua mode navigasi desktop:
 
-- `ADMIN_NAV_LAYOUT=sidebar` → menu tampil di panel kiri
+- `ADMIN_NAV_LAYOUT=sidebar` → menu tampil di panel kiri (default)
 - `ADMIN_NAV_LAYOUT=topbar` → menu tampil di navbar atas
 
-Konfigurasi ini dibaca dari `config/admin.php`.
-
-Jika Anda mengubah nilai env pada environment yang memakai config cache, jalankan:
-
-```bash
-php artisan optimize:clear
-```
-
-Lalu restart server aplikasi bila diperlukan.
-
-### Login Layout via ENV
+### Login Layout
 
 Halaman login admin mendukung tiga model tampilan:
 
-- `ADMIN_LOGIN_LAYOUT=panel` → card login tunggal di tengah
+- `ADMIN_LOGIN_LAYOUT=panel` → card login tunggal di tengah (default)
 - `ADMIN_LOGIN_LAYOUT=split` → split screen dengan panel informatif di sisi kiri
 - `ADMIN_LOGIN_LAYOUT=spotlight` → hero layout dengan form floating di sisi kanan
 
-Konfigurasi ini dibaca dari `config/admin.php`.
+> **Catatan**: Jika mengubah nilai env pada environment yang memakai config cache, jalankan `php artisan optimize:clear` lalu restart server.
 
-Jika Anda mengubah nilainya pada environment yang memakai config cache, jalankan:
+## 🔐 Dev Bypass Auth (Local Only)
 
-```bash
-php artisan optimize:clear
-```
+Untuk memudahkan pengecekan URL yang membutuhkan autentikasi saat pengembangan lokal:
 
-Lalu refresh browser atau restart server aplikasi bila diperlukan.
+1. Set variabel pada `.env`: `AGENT_LOGIN_TOKEN=<token_rahasia>`
+2. Kirim header pada request: `x-login-token: <token_rahasia>`
+3. Middleware akan otomatis melakukan login sebagai user pertama yang tersedia
 
-## 🔐 RBAC / Role-Based Access Control
+**Fitur ini HANYA aktif pada environment `local`.**
 
-Implementasi RBAC pada proyek ini memakai `spatie/laravel-permission` dan berlaku untuk area admin web.
+## 📋 Fitur Aplikasi
 
-### Konsep Utama
-
-- **Guard**: Semua role dan permission menggunakan guard `web`.
-- **Role Sistem**: `super-admin`
-- **Super Admin Bypass**: User dengan role `super-admin` otomatis lolos semua pengecekan authorization lewat `Gate::before`.
-- **Permission Granular**: Permission dipisah per aksi CRUD agar fleksibel saat role bertambah.
-
-### Permission Bawaan
-
-Permission inti saat ini didefinisikan di `App\Support\AccessControl`:
-
-- `dashboard.view`
-- `users.view`, `users.create`, `users.update`, `users.delete`
-- `roles.view`, `roles.create`, `roles.update`, `roles.delete`
-
-### Role Bawaan
-
-Saat menjalankan seeder, sistem akan otomatis membuat:
-
-- role `super-admin`
-- semua permission inti
-- assign semua permission ke `super-admin`
-- assign role `super-admin` ke user `admin@example.com`
-
-Seeder yang menangani ini ada di `Database\Seeders\RolePermissionSeeder`.
-
-### Route Admin yang Diproteksi
-
-Area admin yang sekarang memakai permission:
-
-- `/admin/dashboard` → `dashboard.view`
-- `/admin/users/*` → permission `users.*` sesuai aksi
-- `/admin/roles/*` → permission `roles.*` sesuai aksi
-- `/admin/profile` tetap `auth` only karena bersifat self-service
-
-### Perilaku UI
-
-- Menu admin, baik pada mode sidebar maupun topbar, hanya menampilkan item yang memang boleh diakses user.
-- Tombol action seperti **Add**, **Edit**, dan **Delete** akan di-hide jika user tidak punya permission terkait.
-- Route/controller tetap memvalidasi permission walaupun tombol disembunyikan di UI.
-- Unauthorized access untuk user yang sudah login akan menghasilkan **403**, bukan redirect ke login.
-
-### Safety Rules
-
-Aturan proteksi yang aktif saat ini:
-
-- role `super-admin` tidak bisa diubah nama dari UI
-- role `super-admin` tidak bisa dihapus
-- user `super-admin` terakhir tidak bisa dihapus
-- role `super-admin` terakhir tidak bisa dilepas dari akun jika itu membuat sistem tidak punya `super-admin`
-- role baru selalu dipaksa memiliki `dashboard.view` agar user tidak dead-end setelah login
-
-### Cara Pakai RBAC
-
-#### 1. Inisialisasi database
-
-Gunakan:
-
-```bash
-php artisan migrate:fresh --seed
-```
-
-Perintah ini akan:
-
-- membuat tabel aplikasi
-- membuat tabel RBAC package (`roles`, `permissions`, `model_has_roles`, `model_has_permissions`, `role_has_permissions`)
-- membuat user admin default
-- membuat role `super-admin` dan seluruh permission bawaan
-
-#### 2. Login sebagai super-admin
-
-Kredensial default:
-
-- **Email**: `admin@example.com`
-- **Password**: nilai `ADMIN_DEFAULT_PASSWORD` di `.env` (digenerate random saat project dibuat oleh agent-tool)
-
-#### 3. Buat role baru
-
-Dari admin panel:
-
-- buka menu **Roles**
-- klik **Add Role**
-- isi nama role
-- pilih permission yang dibutuhkan
-- simpan
-
-Catatan:
-
-- `dashboard.view` akan selalu ikut tersimpan walaupun tidak dicentang manual
-- role `super-admin` tidak dapat dikelola dari UI
-
-#### 4. Buat user baru dan assign role
-
-Dari admin panel:
-
-- buka menu **Users**
-- klik **Add User**
-- isi `name`, `email`, `password`
-- pilih satu role
-- simpan
-
-V1 memakai assignment **single-role** di form user, walaupun storage package mendukung multi-role.
-
-#### 5. Ubah permission user
-
-Permission user dikelola melalui role:
-
-- edit role di menu **Roles**
-- atau pindahkan user ke role lain dari menu **Users**
-
-Proyek ini belum menyediakan direct permission assignment per user dari UI.
-
-## 🚀 Fitur yang Tersedia
-
-### 🔐 Autentikasi Admin
-- Halaman Login kustom dengan integrasi tema.
-- Mendukung 3 model tampilan login yang bisa dipilih lewat env.
-- Kredensial default:
-  - **Email**: `admin@example.com`
-  - **Password**: nilai `ADMIN_DEFAULT_PASSWORD` di `.env` (digenerate random saat project dibuat oleh agent-tool)
-- Fitur Logout aman.
+### 🔒 Autentikasi & Autorisasi
+- Login/Logout admin dengan proteksi middleware
+- Seed role dan permission otomatis
+- Authorization `403` untuk akses tanpa permission
+- Visibility menu dan action berdasarkan permission
+- Proteksi role sistem `super-admin` (tidak bisa dihapus/dimodifikasi)
 
 ### 📊 Dashboard
-- Ringkasan statistik sistem (Revenue, Users, Orders, Conversion Rate).
-- UI responsif dengan dukungan tema Light & Dark.
+- Ringkasan statistik sistem
+- UI responsif dengan dukungan tema Light & Dark
 
-### 👤 Profil Admin
-- Pengaturan informasi akun (Nama, Email) dan perubahan kata sandi.
-
-### 📦 Manajemen Produk (CRUD)
-- **Create**: Form tambah produk dengan validasi.
-- **Read**: Daftar produk dengan fitur pagination.
-- **Update**: Edit detail produk yang sudah ada.
-- **Delete**: Penghapusan data dengan **Custom Confirmation Dialog (SweetAlert2)** yang mendukung Dark Mode.
+### 📈 Manajemen BMI Records
+- Daftar catatan perhitungan BMI pengguna
+- Detail rekaman BMI per user
+- Riwayat kalkulasi dengan interpretasi status (Underweight, Normal, Overweight, Obese)
 
 ### 👥 Manajemen User
 - CRUD user admin
@@ -231,37 +95,144 @@ Proyek ini belum menyediakan direct permission assignment per user dari UI.
 - Permission matrix per modul
 - Proteksi role sistem `super-admin`
 
+### 👤 Profil Admin
+- Pengaturan informasi akun (Nama, Email)
+- Perubahan kata sandi
+
 ### 🌓 Fitur Tema & UI
-- **Toggle Dark/Light Mode**: Berfungsi di seluruh area admin dan halaman login.
-- **SweetAlert2 Integration**: Notifikasi sukses dan dialog konfirmasi yang cantik.
-- **Configurable Navigation Layout**: Desktop navigation bisa dipilih antara sidebar kiri atau topbar atas lewat env.
-- **Responsive Mobile Menu**: Navigasi mobile tetap memakai drawer agar konsisten di kedua mode layout.
+- **Toggle Dark/Light Mode**: Berfungsi di seluruh area admin dan halaman login, status disimpan di `localStorage`
+- **SweetAlert2 Integration**: Notifikasi sukses dan dialog konfirmasi yang cantik
+- **Responsive Mobile Menu**: Navigasi mobile menggunakan drawer untuk konsistensi di semua layout
 
 ## 🛠️ Cara Menjalankan Proyek
 
-1. Pastikan PHP dan Composer sudah terinstall.
-2. Clone/buka folder proyek.
-3. Jalankan `composer install` (jika vendor belum ada).
-4. Buat file database jika belum ada: `touch database/database.sqlite`.
-5. Jalankan migrasi dan seeder: `php artisan migrate:fresh --seed`.
-6. Jalankan server: `php artisan serve`.
-7. Akses melalui browser di `http://localhost:8000/admin/login`.
+### Prasyarat
+- PHP ^8.2 terinstall
+- Composer terinstall
+- SQLite extension enabled
+
+### Langkah Instalasi
+
+1. **Clone atau buka folder proyek**
+   ```bash
+   cd path/to/project
+   ```
+
+2. **Install dependencies**
+   ```bash
+   composer install
+   ```
+
+3. **Setup environment**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+4. **Buat database SQLite**
+   ```bash
+   touch database/database.sqlite
+   ```
+
+5. **Jalankan migrasi dan seeder**
+   ```bash
+   php artisan migrate:fresh --seed
+   ```
+
+6. **Jalankan server development**
+   ```bash
+   php artisan serve
+   ```
+
+7. **Akses aplikasi**
+   - URL: `http://localhost:8000/admin/login`
+   - Email: `admin@example.com`
+   - Password: Lihat nilai `ADMIN_DEFAULT_PASSWORD` di `.env`
 
 ## ✅ Testing
 
-Untuk memastikan auth, RBAC, dan modul admin berjalan:
+Untuk memastikan auth, RBAC, dan modul admin berjalan dengan baik:
 
 ```bash
 php artisan test
 ```
 
-Coverage utama saat ini mencakup:
-
-- login/logout admin
-- seed role dan permission
-- authorization `403`
-- visibility menu/action berdasarkan permission
+Coverage testing mencakup:
+- Login/logout admin
+- Seed role dan permission
+- Authorization `403`
+- Visibility menu/action berdasarkan permission
 - CRUD users
 - CRUD roles
-- safety rules `super-admin`
-- update profile
+- Safety rules `super-admin`
+- Update profile
+
+## 📁 Struktur Direktori Penting
+
+```
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Admin/
+│   │   │   │   ├── AuthController.php
+│   │   │   │   ├── BmiRecordController.php
+│   │   │   │   ├── ProfileController.php
+│   │   │   │   ├── RoleController.php
+│   │   │   │   └── UserController.php
+│   │   │   └── Controller.php
+│   │   └── Middleware/
+│   ├── Models/
+│   ├── Support/
+│   │   ├── AccessControl.php
+│   │   └── admin_copy.php
+│   └── Providers/
+├── database/
+│   ├── factories/
+│   ├── migrations/
+│   └── seeders/
+├── resources/
+│   ├── views/
+│   │   ├── admin/
+│   │   │   ├── bmi-records/
+│   │   │   ├── roles/
+│   │   │   ├── users/
+│   │   │   ├── login/
+│   │   │   ├── dashboard.blade.php
+│   │   │   ├── layout.blade.php
+│   │   │   └── profile.blade.php
+│   │   └── welcome.blade.php
+│   └── js/
+├── routes/
+│   └── web.php
+├── config/
+│   └── admin.php
+└── themes/
+    ├── backend/
+    └── frontend/
+```
+
+## 🔧 Development Commands
+
+| Command | Deskripsi |
+|---------|-----------|
+| `php artisan serve` | Jalankan server development |
+| `php artisan migrate:fresh --seed` | Reset database dan seed data |
+| `php artisan test` | Jalankan test suite |
+| `php artisan optimize:clear` | Clear semua cache |
+| `php artisan route:list` | Lihat daftar routes |
+| `php artisan pint` | Format kode dengan Laravel Pint |
+
+## 📝 Catatan Penting
+
+1. **Database**: Proyek menggunakan SQLite sebagai default. Untuk production, pertimbangkan PostgreSQL atau MySQL.
+2. **File Upload**: Pastikan direktori `storage/app/public` writable dan sudah jalankan `php artisan storage:link`.
+3. **Permission Cache**: Jika mengubah permission/role, clear cache dengan `php artisan optimize:clear`.
+4. **Dark Mode**: Status tema disimpan di browser localStorage, reset dengan clear browser data.
+
+## 📄 License
+
+Proyek ini menggunakan license MIT sesuai dengan Laravel framework.
+
+---
+
+**Dibuat dengan ❤️ menggunakan Laravel 12 & CRUDBooster**
