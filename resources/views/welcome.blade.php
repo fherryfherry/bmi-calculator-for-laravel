@@ -147,36 +147,6 @@
                 </div>
             </div>
         </div>
-        <script>
-            (function () {
-                const send = () => {
-                    try {
-                        window.parent.postMessage({ type: 'iframe-metadata', url: window.location.href, title: document.title }, '*');
-                    } catch (e) {}
-                };
-                const wrapHistory = () => {
-                    const pushState = history.pushState;
-                    history.pushState = function () {
-                        pushState.apply(this, arguments);
-                        send();
-                    };
-                    const replaceState = history.replaceState;
-                    history.replaceState = function () {
-                        replaceState.apply(this, arguments);
-                        send();
-                    };
-                };
-                window.addEventListener('load', send);
-                window.addEventListener('popstate', send);
-                document.addEventListener('click', (event) => {
-                    const anchor = event.target.closest('a');
-                    if (anchor && anchor.href) {
-                        setTimeout(send, 50);
-                    }
-                });
-                wrapHistory();
-                send();
-            })();
-        </script>
+        @include('ai-agent-helper::metadata-script')
     </body>
 </html>
