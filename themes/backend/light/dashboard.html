@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CRUD Admin - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3471b7",
+                        "accent": "#f97316",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#13191f",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        * { scrollbar-width: none; scrollbar-color: #94a3b8 rgba(148, 163, 184, 0.15); }
+        *:hover { scrollbar-width: thin; }
+        *::-webkit-scrollbar { width: 0; height: 0; }
+        *:hover::-webkit-scrollbar { width: 10px; height: 10px; }
+        *::-webkit-scrollbar-track { background: rgba(148, 163, 184, 0.15); border-radius: 9999px; }
+        *::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #cbd5e1, #94a3b8); border-radius: 9999px; border: 2px solid rgba(255, 255, 255, 0.6); }
+        .dark *::-webkit-scrollbar-track { background: rgba(30, 41, 59, 0.6); }
+        .dark *::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #475569, #334155); border-color: rgba(15, 23, 42, 0.8); }
+    </style>
+    <script>
+        if (localStorage.getItem('dark-mode') === 'true' || (!('dark-mode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased">
+<div class="flex h-screen overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="w-64 flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hidden md:flex flex-col">
+<div class="p-6 flex items-center gap-3">
+<div class="size-10 rounded-lg bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-2xl">admin_panel_settings</span>
+</div>
+<div>
+<h1 class="text-lg font-bold leading-tight tracking-tight">CRUD Admin</h1>
+<p class="text-xs text-slate-500 dark:text-slate-400">Management System</p>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary border border-primary/20">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-semibold">Dashboard</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-medium">Users</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="text-sm font-medium">Products</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="text-sm font-medium">Orders</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</div>
+</nav>
+<div class="p-4 border-t border-slate-200 dark:border-slate-800">
+<a href="profile.html" class="flex items-center gap-3 p-2 rounded-xl bg-slate-100 dark:bg-slate-800 group transition-all">
+<div class="size-10 rounded-full bg-slate-300 dark:bg-slate-700 overflow-hidden shrink-0">
+<img alt="Admin Profile" class="w-full h-full object-cover" src="https://ui-avatars.com/api/?name=Alex+Morgan&background=3471b7&color=fff"/>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-bold truncate group-hover:text-primary transition-colors">Alex Morgan</p>
+<p class="text-xs text-slate-500 truncate">Super Admin</p>
+</div>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">chevron_right</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col overflow-hidden bg-background-light dark:bg-background-dark">
+<!-- Header -->
+<header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between px-8 z-10">
+<div class="flex items-center flex-1 max-w-md">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg focus:ring-2 focus:ring-primary text-sm transition-all" placeholder="Search analytics, users or orders..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button id="dark-mode-toggle" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span id="dark-mode-icon" class="material-symbols-outlined">light_mode</span>
+</button>
+<div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-800 mx-1"></div>
+<div class="flex items-center gap-2 cursor-pointer group">
+<span class="text-sm font-semibold hidden sm:block group-hover:text-primary transition-colors">Workspace A</span>
+<span class="material-symbols-outlined text-slate-400">expand_more</span>
+</div>
+</div>
+</header>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto p-8">
+<div class="max-w-7xl mx-auto space-y-8">
+<!-- Page Title -->
+<div class="flex items-end justify-between">
+<div>
+<h2 class="text-3xl font-bold tracking-tight">System Overview</h2>
+<p class="text-slate-500 dark:text-slate-400 mt-1">Welcome back, here's what's happening with your store today.</p>
+</div>
+<button class="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2.5 rounded-lg text-sm font-bold shadow-lg shadow-primary/20 transition-all">
+<span class="material-symbols-outlined text-sm">download</span>
+                            Export Data
+                        </button>
+</div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary/10 rounded-lg text-primary">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<span class="text-emerald-500 text-xs font-bold flex items-center bg-emerald-50 dark:bg-emerald-500/10 px-2 py-1 rounded-full">+12.5%</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Total Revenue</p>
+<h3 class="text-2xl font-bold mt-1">$128,430.00</h3>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-accent/10 rounded-lg text-accent">
+<span class="material-symbols-outlined">person_celebrate</span>
+</div>
+<span class="text-rose-500 text-xs font-bold flex items-center bg-rose-50 dark:bg-rose-500/10 px-2 py-1 rounded-full">-2.4%</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Active Users</p>
+<h3 class="text-2xl font-bold mt-1">45,231</h3>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary/10 rounded-lg text-primary">
+<span class="material-symbols-outlined">local_mall</span>
+</div>
+<span class="text-emerald-500 text-xs font-bold flex items-center bg-emerald-50 dark:bg-emerald-500/10 px-2 py-1 rounded-full">+8.1%</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Total Orders</p>
+<h3 class="text-2xl font-bold mt-1">12,543</h3>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-accent/10 rounded-lg text-accent">
+<span class="material-symbols-outlined">trending_up</span>
+</div>
+<span class="text-emerald-500 text-xs font-bold flex items-center bg-emerald-50 dark:bg-emerald-500/10 px-2 py-1 rounded-full">+0.5%</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Conversion Rate</p>
+<h3 class="text-2xl font-bold mt-1">3.24%</h3>
+</div>
+</div>
+<!-- Chart & Activity Row -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Activity Chart -->
+<div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
+<div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<h3 class="font-bold text-lg">Activity Overview</h3>
+<div class="flex items-center gap-2">
+<span class="flex items-center gap-1 text-xs font-medium text-slate-500"><span class="w-3 h-3 rounded-full bg-primary"></span> Revenue</span>
+<span class="flex items-center gap-1 text-xs font-medium text-slate-500 ml-4"><span class="w-3 h-3 rounded-full bg-accent"></span> Users</span>
+</div>
+</div>
+<div class="p-8 flex-1">
+<div class="flex items-end gap-1 h-64 w-full">
+<div class="flex-1 flex flex-col gap-1 items-center">
+<div class="w-full bg-primary/20 rounded-t-lg relative group h-[40%]">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-lg h-1/2 group-hover:h-3/4 transition-all"></div>
+</div>
+<span class="text-[10px] uppercase font-bold text-slate-400 mt-2">Mon</span>
+</div>
+<div class="flex-1 flex flex-col gap-1 items-center">
+<div class="w-full bg-primary/20 rounded-t-lg relative group h-[65%]">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-lg h-2/3 group-hover:h-5/6 transition-all"></div>
+</div>
+<span class="text-[10px] uppercase font-bold text-slate-400 mt-2">Tue</span>
+</div>
+<div class="flex-1 flex flex-col gap-1 items-center">
+<div class="w-full bg-primary/20 rounded-t-lg relative group h-[50%]">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-lg h-3/4 group-hover:h-full transition-all"></div>
+</div>
+<span class="text-[10px] uppercase font-bold text-slate-400 mt-2">Wed</span>
+</div>
+<div class="flex-1 flex flex-col gap-1 items-center">
+<div class="w-full bg-primary/20 rounded-t-lg relative group h-[85%]">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-lg h-1/3 group-hover:h-1/2 transition-all"></div>
+</div>
+<span class="text-[10px] uppercase font-bold text-slate-400 mt-2">Thu</span>
+</div>
+<div class="flex-1 flex flex-col gap-1 items-center">
+<div class="w-full bg-primary/20 rounded-t-lg relative group h-[95%]">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-lg h-3/4 group-hover:h-full transition-all"></div>
+</div>
+<span class="text-[10px] uppercase font-bold text-slate-400 mt-2">Fri</span>
+</div>
+<div class="flex-1 flex flex-col gap-1 items-center">
+<div class="w-full bg-primary/20 rounded-t-lg relative group h-[60%]">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-lg h-1/2 group-hover:h-2/3 transition-all"></div>
+</div>
+<span class="text-[10px] uppercase font-bold text-slate-400 mt-2">Sat</span>
+</div>
+<div class="flex-1 flex flex-col gap-1 items-center">
+<div class="w-full bg-primary/20 rounded-t-lg relative group h-[45%]">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-lg h-2/3 group-hover:h-5/6 transition-all"></div>
+</div>
+<span class="text-[10px] uppercase font-bold text-slate-400 mt-2">Sun</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Activity List -->
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
+<div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<h3 class="font-bold text-lg">Recent Activity</h3>
+<button class="text-primary text-xs font-bold hover:underline">View All</button>
+</div>
+<div class="p-4 flex-1 space-y-6 overflow-y-auto">
+<div class="flex gap-4">
+<div class="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-xl">shopping_cart</span>
+</div>
+<div>
+<p class="text-sm font-bold">New order placed</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">#ORD-4921 by James Smith</p>
+<p class="text-[10px] text-slate-400 mt-1">2 mins ago</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="size-10 rounded-full bg-accent/10 flex items-center justify-center text-accent flex-shrink-0">
+<span class="material-symbols-outlined text-xl">person_add</span>
+</div>
+<div>
+<p class="text-sm font-bold">New user registered</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Sarah Jenkins joined as Customer</p>
+<p class="text-[10px] text-slate-400 mt-1">45 mins ago</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="size-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 flex-shrink-0">
+<span class="material-symbols-outlined text-xl">check_circle</span>
+</div>
+<div>
+<p class="text-sm font-bold">Inventory Refilled</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Stock updated for 'Wireless Headset'</p>
+<p class="text-[10px] text-slate-400 mt-1">2 hours ago</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-xl">payments</span>
+</div>
+<div>
+<p class="text-sm font-bold">Payout Successful</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">$4,200.00 sent to main vault</p>
+<p class="text-[10px] text-slate-400 mt-1">5 hours ago</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Products Table Preview -->
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+<div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<h3 class="font-bold text-lg">Top Products</h3>
+<button class="flex items-center gap-2 text-slate-500 text-sm hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                                Filter
+                            </button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-slate-50 dark:bg-slate-800/50">
+<tr>
+<th class="px-6 py-4 text-[10px] uppercase font-bold text-slate-400 tracking-wider">Product</th>
+<th class="px-6 py-4 text-[10px] uppercase font-bold text-slate-400 tracking-wider">Status</th>
+<th class="px-6 py-4 text-[10px] uppercase font-bold text-slate-400 tracking-wider text-right">Inventory</th>
+<th class="px-6 py-4 text-[10px] uppercase font-bold text-slate-400 tracking-wider text-right">Price</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400">devices</span>
+</div>
+<span class="text-sm font-bold">Elite Series Camera v2</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold rounded">IN STOCK</span>
+</td>
+<td class="px-6 py-4 text-right text-sm font-medium">842</td>
+<td class="px-6 py-4 text-right text-sm font-bold">$249.99</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400">watch</span>
+</div>
+<span class="text-sm font-bold">Pro Smartwatch Gen 4</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-amber-100 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[10px] font-bold rounded">LOW STOCK</span>
+</td>
+<td class="px-6 py-4 text-right text-sm font-medium">12</td>
+<td class="px-6 py-4 text-right text-sm font-bold">$189.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+    <script>
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const darkModeIcon = document.getElementById('dark-mode-icon');
+        const htmlElement = document.documentElement;
+
+        function updateIcon() {
+            if (htmlElement.classList.contains('dark')) {
+                darkModeIcon.textContent = 'dark_mode';
+            } else {
+                darkModeIcon.textContent = 'light_mode';
+            }
+        }
+
+        updateIcon();
+
+        darkModeToggle.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+            const isDark = htmlElement.classList.contains('dark');
+            localStorage.setItem('dark-mode', isDark);
+            updateIcon();
+        });
+    </script>
+</body></html>
