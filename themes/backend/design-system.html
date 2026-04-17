@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Design System Library</title>
+  <script>
+    const storedTheme = localStorage.getItem("admin-design-theme");
+    if (
+      storedTheme === "dark" ||
+      (!storedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      document.documentElement.classList.add("dark");
+    }
+  </script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: "#0f766e",
+              soft: "#d7f3ef",
+              deep: "#0b4f4a"
+            },
+            accent: {
+              DEFAULT: "#f97316",
+              soft: "#ffedd5"
+            },
+            ink: {
+              DEFAULT: "#172033",
+              muted: "#5b667a",
+              soft: "#8a94a8"
+            },
+            canvas: {
+              DEFAULT: "#f3f6f4",
+              soft: "#fbfcfb",
+              dark: "#0d141b",
+              panel: "#111b24"
+            },
+            line: {
+              DEFAULT: "#d7dde6",
+              dark: "#243140"
+            },
+            success: "#0f9f6e",
+            warning: "#d97706",
+            danger: "#dc2626",
+            info: "#2563eb"
+          },
+          fontFamily: {
+            sans: ["Manrope", "sans-serif"],
+            display: ["Sora", "sans-serif"]
+          },
+          boxShadow: {
+            panel: "0 24px 60px -28px rgba(15, 23, 42, 0.28)",
+            glow: "0 20px 40px -24px rgba(15, 118, 110, 0.55)"
+          },
+          backgroundImage: {
+            "mesh-light":
+              "radial-gradient(circle at top left, rgba(15,118,110,0.18), transparent 34%), radial-gradient(circle at top right, rgba(249,115,22,0.18), transparent 28%), linear-gradient(180deg, rgba(255,255,255,0.9), rgba(243,246,244,0.94))",
+            "mesh-dark":
+              "radial-gradient(circle at top left, rgba(17, 196, 181, 0.16), transparent 32%), radial-gradient(circle at top right, rgba(249,115,22,0.16), transparent 26%), linear-gradient(180deg, rgba(13,20,27,0.92), rgba(10,15,22,0.96))"
+          },
+          animation: {
+            floaty: "floaty 8s ease-in-out infinite",
+            pulsebar: "pulsebar 2.8s ease-in-out infinite"
+          },
+          keyframes: {
+            floaty: {
+              "0%, 100%": { transform: "translateY(0px)" },
+              "50%": { transform: "translateY(-8px)" }
+            },
+            pulsebar: {
+              "0%, 100%": { opacity: "0.5", transform: "scaleY(0.85)" },
+              "50%": { opacity: "1", transform: "scaleY(1)" }
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: "Manrope", sans-serif;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: "FILL" 0, "wght" 500, "GRAD" 0, "opsz" 24;
+      display: inline-flex;
+      vertical-align: middle;
+    }
+
+    .section-grid {
+      background-image:
+        linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    .dark .section-grid {
+      background-image:
+        linear-gradient(rgba(71, 85, 105, 0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(71, 85, 105, 0.15) 1px, transparent 1px);
+    }
+
+    .glass-panel {
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .ring-display {
+      background:
+        conic-gradient(#0f766e 0deg 240deg, rgba(15, 118, 110, 0.15) 240deg 360deg);
+    }
+
+    .note-editor.note-frame {
+      border: 1px solid #d7dde6;
+      border-radius: 1.5rem;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    .note-editor.note-frame .note-toolbar {
+      border-bottom: 1px solid #d7dde6;
+      background: #fbfcfb;
+      padding: 0.875rem;
+    }
+
+    .note-editor.note-frame .note-btn-group {
+      margin-right: 0.5rem;
+    }
+
+    .note-editor.note-frame .note-btn {
+      border: 0;
+      border-radius: 0.875rem;
+      background: #ffffff;
+      color: #172033;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+      padding: 0.45rem 0.7rem;
+    }
+
+    .note-editor.note-frame .note-btn:hover,
+    .note-editor.note-frame .note-btn:focus {
+      background: #d7f3ef;
+      color: #0f766e;
+    }
+
+    .note-editor.note-frame .note-statusbar {
+      border-top: 1px solid #d7dde6;
+      background: #fbfcfb;
+    }
+
+    .note-editor.note-frame .note-editing-area .note-editable {
+      min-height: 240px;
+      background: #ffffff;
+      color: #172033;
+      padding: 1.5rem;
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+
+    .note-editor.note-frame .note-editing-area .note-editable h1,
+    .note-editor.note-frame .note-editing-area .note-editable h2,
+    .note-editor.note-frame .note-editing-area .note-editable h3 {
+      font-family: "Sora", sans-serif;
+      font-weight: 700;
+      line-height: 1.2;
+      color: #172033;
+    }
+
+    .note-editor.note-frame .note-editing-area .note-editable a {
+      color: #0f766e;
+    }
+
+    .dark .note-editor.note-frame {
+      border-color: #243140;
+      background: rgba(17, 27, 36, 0.96);
+    }
+
+    .dark .note-editor.note-frame .note-toolbar,
+    .dark .note-editor.note-frame .note-statusbar {
+      border-color: #243140;
+      background: #101923;
+    }
+
+    .dark .note-editor.note-frame .note-btn {
+      background: #16212c;
+      color: #e2e8f0;
+      box-shadow: none;
+    }
+
+    .dark .note-editor.note-frame .note-btn:hover,
+    .dark .note-editor.note-frame .note-btn:focus {
+      background: rgba(15, 118, 110, 0.2);
+      color: #d7f3ef;
+    }
+
+    .dark .note-editor.note-frame .note-editing-area .note-editable {
+      background: #111b24;
+      color: #e2e8f0;
+    }
+
+    .dark .note-editor.note-frame .note-editing-area .note-editable h1,
+    .dark .note-editor.note-frame .note-editing-area .note-editable h2,
+    .dark .note-editor.note-frame .note-editing-area .note-editable h3 {
+      color: #ffffff;
+    }
+
+    .dark .note-dropdown-menu {
+      background: #111b24;
+      color: #e2e8f0;
+      border-color: #243140;
+    }
+
+    .dark .note-modal-content {
+      background: #111b24;
+      color: #e2e8f0;
+    }
+  </style>
+</head>
+<body class="bg-canvas text-ink antialiased dark:bg-canvas-dark dark:text-white">
+  <div class="min-h-screen bg-mesh-light dark:bg-mesh-dark">
+    <div class="mx-auto grid min-h-screen max-w-[1680px] lg:grid-cols-[280px_minmax(0,1fr)]">
+      <aside class="glass-panel hidden border-r border-white/70 bg-white/75 px-6 py-8 shadow-panel dark:border-line-dark dark:bg-canvas-panel/80 lg:block">
+        <div class="flex items-center gap-4">
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand text-white shadow-glow">
+            <span class="material-symbols-outlined text-[26px]">dashboard_customize</span>
+          </div>
+          <div>
+            <p class="font-display text-lg font-bold tracking-tight">Atlas Admin Kit</p>
+            <p class="text-sm text-ink-muted dark:text-slate-400">Design system for CMS backend</p>
+          </div>
+        </div>
+
+        <div class="mt-8 rounded-[28px] border border-brand/15 bg-brand/10 p-5 dark:border-brand/30 dark:bg-brand/10">
+          <div class="flex items-center justify-between">
+            <span class="rounded-full bg-white/80 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-brand dark:bg-brand/15 dark:text-emerald-200">Version 1.0</span>
+            <span class="material-symbols-outlined text-brand dark:text-emerald-200">verified</span>
+          </div>
+          <h1 class="mt-4 font-display text-2xl font-bold leading-tight">Complete component library for admin workflow.</h1>
+          <p class="mt-3 text-sm leading-6 text-ink-muted dark:text-slate-300">Foundation, controls, data states, and layout patterns packed into one review page.</p>
+        </div>
+
+        <nav class="mt-8 space-y-2 text-sm">
+          <a href="#foundations" class="flex items-center gap-3 rounded-2xl px-4 py-3 font-semibold text-ink transition hover:bg-white hover:text-brand dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white">
+            <span class="material-symbols-outlined text-base">palette</span>Foundations
+          </a>
+          <a href="#typography" class="flex items-center gap-3 rounded-2xl px-4 py-3 font-semibold text-ink transition hover:bg-white hover:text-brand dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white">
+            <span class="material-symbols-outlined text-base">text_fields</span>Typography
+          </a>
+          <a href="#components" class="flex items-center gap-3 rounded-2xl px-4 py-3 font-semibold text-ink transition hover:bg-white hover:text-brand dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white">
+            <span class="material-symbols-outlined text-base">view_quilt</span>Components
+          </a>
+          <a href="#data-display" class="flex items-center gap-3 rounded-2xl px-4 py-3 font-semibold text-ink transition hover:bg-white hover:text-brand dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white">
+            <span class="material-symbols-outlined text-base">table_chart</span>Data Display
+          </a>
+          <a href="#feedback" class="flex items-center gap-3 rounded-2xl px-4 py-3 font-semibold text-ink transition hover:bg-white hover:text-brand dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white">
+            <span class="material-symbols-outlined text-base">notification_important</span>Feedback
+          </a>
+          <a href="#layout" class="flex items-center gap-3 rounded-2xl px-4 py-3 font-semibold text-ink transition hover:bg-white hover:text-brand dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white">
+            <span class="material-symbols-outlined text-base">space_dashboard</span>Layout Patterns
+          </a>
+        </nav>
+
+        <div class="mt-8 rounded-[28px] border border-slate-200/80 bg-white/80 p-5 dark:border-line-dark dark:bg-slate-900/70">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-[0.22em] text-ink-soft">Design Principles</p>
+              <p class="mt-2 font-display text-xl font-semibold">Clear. Calm. Fast.</p>
+            </div>
+            <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-accent/15 text-accent">
+              <span class="material-symbols-outlined">auto_awesome</span>
+            </div>
+          </div>
+          <ul class="mt-4 space-y-3 text-sm leading-6 text-ink-muted dark:text-slate-300">
+            <li>Use dense information layouts without visual overload.</li>
+            <li>Keep critical actions obvious with one primary accent.</li>
+            <li>Prefer semantic tokens over hard-coded utility colors.</li>
+          </ul>
+        </div>
+      </aside>
+
+      <main class="min-w-0 px-4 py-4 sm:px-6 lg:px-8 lg:py-8">
+        <header class="glass-panel sticky top-4 z-20 rounded-[30px] border border-white/70 bg-white/75 px-5 py-4 shadow-panel dark:border-line-dark dark:bg-canvas-panel/80">
+          <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.24em] text-brand dark:text-emerald-200">
+                <span class="inline-flex h-2 w-2 rounded-full bg-brand"></span>
+                Admin Panel Design System
+              </div>
+              <h2 class="mt-2 font-display text-3xl font-bold tracking-tight sm:text-4xl">Library page for token and component review.</h2>
+              <p class="mt-2 max-w-3xl text-sm leading-6 text-ink-muted dark:text-slate-300">Built for Laravel CMS backend themes with a modern editorial interface, bold token system, and ready-to-adapt module patterns.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <div class="rounded-2xl border border-slate-200 bg-white/80 px-4 py-3 text-sm shadow-sm dark:border-line-dark dark:bg-slate-950/50">
+                <p class="font-semibold">Density</p>
+                <p class="text-ink-muted dark:text-slate-400">Comfortable / 12-column</p>
+              </div>
+              <div class="rounded-2xl border border-slate-200 bg-white/80 px-4 py-3 text-sm shadow-sm dark:border-line-dark dark:bg-slate-950/50">
+                <p class="font-semibold">Accessibility</p>
+                <p class="text-ink-muted dark:text-slate-400">AA contrast / visible focus</p>
+              </div>
+              <button id="theme-toggle" class="inline-flex items-center gap-2 rounded-2xl bg-ink px-4 py-3 text-sm font-bold text-white transition hover:bg-slate-700 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200">
+                <span id="theme-icon" class="material-symbols-outlined text-base">dark_mode</span>
+                <span id="theme-label">Dark mode</span>
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <section class="mt-6 grid gap-5 xl:grid-cols-[minmax(0,1.2fr)_minmax(360px,0.8fr)]">
+          <div class="section-grid relative overflow-hidden rounded-[36px] border border-white/70 bg-white/80 p-6 shadow-panel dark:border-line-dark dark:bg-canvas-panel/80 sm:p-8">
+            <div class="absolute -right-12 top-8 h-40 w-40 rounded-full bg-brand/10 blur-3xl"></div>
+            <div class="absolute bottom-6 right-24 h-24 w-24 rounded-full bg-accent/15 blur-2xl"></div>
+            <div class="relative">
+              <div class="flex flex-wrap items-center gap-3">
+                <span class="rounded-full bg-brand/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-brand dark:bg-brand/15 dark:text-emerald-200">Foundation preview</span>
+                <span class="rounded-full bg-slate-900 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-white dark:bg-white dark:text-slate-900">CMS backend</span>
+              </div>
+              <h3 class="mt-5 max-w-3xl font-display text-4xl font-bold leading-tight sm:text-5xl">One visual language for tables, forms, actions, and system states.</h3>
+              <p class="mt-4 max-w-2xl text-base leading-7 text-ink-muted dark:text-slate-300">The direction uses a calm teal brand tone, warm action accent, layered surfaces, and high-legibility typography to support long admin sessions.</p>
+
+              <div class="mt-8 grid gap-4 md:grid-cols-3">
+                <div class="animate-floaty rounded-[28px] border border-brand/15 bg-white/90 p-5 shadow-sm dark:border-brand/25 dark:bg-slate-900/80">
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold">Semantic tokens</span>
+                    <span class="material-symbols-outlined text-brand">token</span>
+                  </div>
+                  <p class="mt-3 text-sm text-ink-muted dark:text-slate-300">Brand, accent, success, warning, danger, info, canvas, and line tokens.</p>
+                </div>
+                <div class="animate-floaty rounded-[28px] border border-slate-200 bg-white/90 p-5 shadow-sm [animation-delay:0.3s] dark:border-line-dark dark:bg-slate-900/80">
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold">Interaction states</span>
+                    <span class="material-symbols-outlined text-accent">touch_app</span>
+                  </div>
+                  <p class="mt-3 text-sm text-ink-muted dark:text-slate-300">Hover, focus, selected, disabled, destructive, and active patterns are consistent.</p>
+                </div>
+                <div class="animate-floaty rounded-[28px] border border-slate-200 bg-white/90 p-5 shadow-sm [animation-delay:0.6s] dark:border-line-dark dark:bg-slate-900/80">
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold">Layout primitives</span>
+                    <span class="material-symbols-outlined text-info">grid_view</span>
+                  </div>
+                  <p class="mt-3 text-sm text-ink-muted dark:text-slate-300">Sidebar shell, content cards, toolbars, tables, drawers, and overlays.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-[36px] border border-white/70 bg-white/80 p-6 shadow-panel dark:border-line-dark dark:bg-canvas-panel/80">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs font-bold uppercase tracking-[0.22em] text-ink-soft">System score</p>
+                <h3 class="mt-2 font-display text-2xl font-bold">Token Readiness</h3>
+              </div>
+              <div class="ring-display grid h-24 w-24 place-items-center rounded-full">
+                <div class="grid h-16 w-16 place-items-center rounded-full bg-white text-lg font-extrabold text-brand dark:bg-canvas-panel">82%</div>
+              </div>
+            </div>
+
+            <div class="mt-6 space-y-4">
+              <div>
+                <div class="mb-2 flex items-center justify-between text-sm">
+                  <span class="font-semibold">Component coverage</span>
+                  <span class="text-ink-muted dark:text-slate-400">31 modules</span>
+                </div>
+                <div class="h-3 overflow-hidden rounded-full bg-brand/10">
+                  <div class="h-full w-[86%] rounded-full bg-brand"></div>
+                </div>
+              </div>
+              <div>
+                <div class="mb-2 flex items-center justify-between text-sm">
+                  <span class="font-semibold">Theme parity</span>
+                  <span class="text-ink-muted dark:text-slate-400">Light / Dark</span>
+                </div>
+                <div class="h-3 overflow-hidden rounded-full bg-info/10">
+                  <div class="h-full w-[74%] rounded-full bg-info"></div>
+                </div>
+              </div>
+              <div>
+                <div class="mb-2 flex items-center justify-between text-sm">
+                  <span class="font-semibold">Accessibility audit</span>
+                  <span class="text-ink-muted dark:text-slate-400">Focus ring on key inputs</span>
+                </div>
+                <div class="h-3 overflow-hidden rounded-full bg-accent/10">
+                  <div class="h-full w-[91%] rounded-full bg-accent"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6 grid gap-3 sm:grid-cols-2">
+              <div class="rounded-[24px] border border-slate-200 bg-canvas-soft p-4 dark:border-line-dark dark:bg-slate-950/50">
+                <p class="text-xs font-bold uppercase tracking-[0.22em] text-ink-soft">Recommended</p>
+                <p class="mt-2 text-sm font-semibold">Use semantic class aliases in Blade components.</p>
+              </div>
+              <div class="rounded-[24px] border border-slate-200 bg-canvas-soft p-4 dark:border-line-dark dark:bg-slate-950/50">
+                <p class="text-xs font-bold uppercase tracking-[0.22em] text-ink-soft">Best use</p>
+                <p class="mt-2 text-sm font-semibold">Dashboard, CRUD forms, settings, approvals, and reporting pages.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="foundations" class="mt-6 rounded-[36px] border border-white/70 bg-white/80 p-6 shadow-panel dark:border-line-dark dark:bg-canvas-panel/80 sm:p-8">
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-[0.22em] text-brand dark:text-emerald-200">Foundations</p>
+              <h3 class="mt-2 font-display text-3xl font-bold">Color, spacing, radius, and elevation tokens.</h3>
+            </div>
+            <p class="max-w-xl text-sm leading-6 text-ink-muted dark:text-slate-300">The system separates raw palette from semantic intent so UI states stay consistent across CRUD screens.</p>
+          </div>
+
+          <div class="mt-8 grid gap-5 xl:grid-cols-[minmax(0,1.2fr)_minmax(340px,0.8fr)]">
+            <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <div class="rounded-[28px] border border-brand/15 p-4 dark:border-brand/30">
+                <div class="h-28 rounded-[22px] bg-brand"></div>
+                <p class="mt-4 text-sm font-bold">Brand</p>
+                <p class="text-sm text-ink-muted dark:text-slate-400">#0F766E</p>
+              </div>
+              <div class="rounded-[28px] border border-accent/20 p-4 dark:border-accent/30">
+                <div class="h-28 rounded-[22px] bg-accent"></div>
+                <p class="mt-4 text-sm font-bold">Accent</p>
+                <p class="text-sm text-ink-muted dark:text-slate-400">#F97316</p>
+              </div>
+              <div class="rounded-[28px] border border-slate-200 p-4 dark:border-line-dark">
+                <div class="h-28 rounded-[22px] bg-ink"></div>
+                <p class="mt-4 text-sm font-bold">Ink</p>
+                <p class="text-sm text-ink-muted dark:text-slate-400">#172033</p>
+              </div>
+              <div class="rounded-[28px] border border-slate-200 p-4 dark:border-line-dark">
+                <div class="h-28 rounded-[22px] bg-canvas"></div>
+                <p class="mt-4 text-sm font-bold">Canvas</p>
+                <p class="text-sm text-ink-muted dark:text-slate-400">#F3F6F4</p>
+              </div>
+              <div class="rounded-[28px] border border-slate-200 p-4 dark:border-line-dark">
+                <div class="h-20 rounded-[22px] bg-success"></div>
+                <p class="mt-4 text-sm font-bold">Success</p>
+                <p class="text-sm text-ink-muted dark:text-slate-400">Confirmation state</p>
+              </div>
+              <div class="rounded-[28px] border border-slate-200 p-4 dark:border-line-dark">
+                <div class="h-20 rounded-[22px] bg-warning"></div>
+                <p class="mt-4 text-sm font-bold">Warning</p>
+                <p class="text-sm text-ink-muted dark:text-slate-400">Attention required</p>
+              </div>
+              <div class="rounded-[28px] border border-slate-200 p-4 dark:border-line-dark">
+                <div class="h-20 rounded-[22px] bg-danger"></div>
+                <p class="mt-4 text-sm font-bold">Danger</p>
+                <p class="text-sm text-ink-muted dark:text-slate-400">Destructive flows</p>
+              </div>
+              <div class="rounded-[28px] border border-slate-200 p-4 dark:border-line-dark">
+                <div class="h-20 rounded-[22px] bg-info"></div>
+                <p class="mt-4 text-sm font-bold">Info</p>
+                <p class="text-sm text-ink-muted dark:text-slate-400">Status and progress</p>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <div class="rounded-[28px] border border-slate-200 bg-canvas-soft p-5 dark:border-line-dark dark:bg-slate-950/50">
+                <p class="text-xs font-bold uppercase tracking-[0.22em] text-ink-soft">Spacing scale</p>
+                <div class="mt-4 space-y-3">
+                  <div class="flex items-center gap-4">
+                    <span class="w-14 text-sm font-semibold">4</span>
+                    <div class="h-3 w-4 rounded-full bg-brand"></div>
+                  </div>
+                  <div class="flex items-center gap-4">
+                    <span class="w-14 text-sm font-semibold">12</span>
+                    <div class="h-3 w-12 rounded-full bg-brand"></div>
+                  </div>
+                  <div class="flex items-center gap-4">
+                    <span class="w-14 text-sm font-semibold">24</span>
+                    <div class="h-3 w-24 rounded-full bg-brand"></div>
+                  </div>
+                  <div class="flex items-center gap-4">
+                    <span class="w-14 text-sm font-semibold">40</span>
+                    <div class="h-3 w-40 rounded-full bg-brand"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="rounded-[28px] border border-slate-200 bg-canvas-soft p-5 dark:border-line-dark dark:bg-slate-950/50">
+                <p class="text-xs font-bold uppercase tracking-[0.22em] text-ink-soft">Radius + shadow</p>
+                <div class="mt-4 grid gap-3 sm:grid-cols-3">
+                  <div class="rounded-xl border border-slate-200 bg-white p-4 text-center text-sm shadow-sm dark:border-line-dark dark:bg-slate-900">`xl`</div>
+                  <div class="rounded-2xl border border-slate-200 bg-white p-4 text-center text-sm shadow-sm dark:border-line-dark dark:bg-slate-900">`2xl`</div>
+                  <div class="rounded-[28px] border border-slate-200 bg-white p-4 text-center text-sm shadow-panel dark:border-line-dark dark:bg-slate-900">panel</div>
+                </div>
+              </div>
+              <div class="rounded-[28px] border border-slate-200 bg-canvas-soft p-5 dark:border-line-dark dark:bg-slate-950/50">
+                <p class="text-xs font-bold uppercase tracking-[0.22em] text-ink-soft">Surface usage</p>
+                <ul class="mt-4 space-y-3 text-sm leading-6 text-ink-muted dark:text-slate-300">
+                  <li>Primary content sits on elevated white or dark panel surfaces.</li>
+                  <li>Interactive emphasis uses subtle tint fills before strong solid fills.</li>
+                  <li>Line tokens stay soft to avoid dashboard fatigue in dense views.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="typography" class="mt-6 grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(360px,0.9fr)]">
+          <div class="rounded-[36px] border border-white/70 bg-white/80 p-6 shadow-panel dark:border-line-dark dark:bg-canvas-panel/80 sm:p-8">
+            <p class="text-xs font-bold uppercase tracking-[0.22em] text-brand dark:text-emerald-200">Typography</p>
+            <h3 class="mt-2 font-display text-3xl font-bold">Display for hierarchy, Manrope for long reading.</h3>
+            <div class="mt-8 space-y-6">
+              <div>
+                <p class="font-display text-5xl font-bold leading-none">Heading 1</p>
+                <p class="mt-2 text-sm text-ink-muted dark:text-slate-400">Sora 48/700 for section hero and dashboard headers.</p>
+              </div>
+              <div>
+                <p class="font-display text-4xl font-bold leading-none">Heading 2</p>
+                <p class="mt-2 text-sm text-ink-muted dark:text-slate-400">Sora 36/700 for screen titles and card groups.</p>
+              </div>
+              <div>
+                <p class="text-lg font-semibold leading-8">Body Large</p>
+                <p class="mt-1 max-w-2xl text-base leading-7 text-ink-muted dark:text-slate-300">Readable for description, explanatory settings text, and reporting summaries that can span several lines.</p>
+              </div>
+              <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.24em] text-ink-soft">Label / Overline</p>
+                <p class="mt-1 text-sm text-ink-muted dark:text-slate-300">Used for metadata, cards, pill legends, and filter headers.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-[36px] border border-white/70 bg-white/80 p-6 shadow-panel dark:border-line-dark dark:bg-canvas-panel/80 sm:p-8">
+            <p class="text-xs font-bold uppercase tracking-[0.22em] text-brand dark:text-emerald-200">Copy rules</p>
+            <div class="mt-6 space-y-4 text-sm leading-7 text-ink-muted dark:text-slate-300">
+              <div class="rounded-[24px] border border-slate-200 bg-canvas-soft p-4 dark:border-line-dark dark:bg-slate-950/50">
+                Sentence case for labels and navigation.
+              </div>
+              <div class="rounded-[24px] border border-slate-200 bg-canvas-soft p-4 dark:border-line-dark dark:bg-slate-950/50">
+                Use concise verbs for primary actions: Save, Publish, Invite, Export.
+              </div>
+              <div class="rounded-[24px] border border-slate-200 bg-canvas-soft p-4 dark:border-line-dark dark:bg-slate-950/50">
+                Keep helper text under 2 lines where possible to preserve scanning speed.
+              </div>
+              <div class="rounded-[24px] border border-slate-200 bg-canvas-soft p-4 dark:border-line-dark dark:bg-slate-950/50">
+                Status badges should always use semantic color and clear label pairings.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="components" class="mt-6 rounded-[36px] border border-white/70 bg-white/80 p-6 shadow-panel dark:border-line-dark dark:bg-canvas-panel/80 sm:p-8">
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-[0.22em] text-brand dark:text-emerald-200">Components</p>
+              <h3 class="mt-2 font-display text-3xl font-bold">Complete form patterns for CRUD and CMS workflows.</h3>
+            </div>
+            <p class="max-w-2xl text-sm leading-6 text-ink-muted dark:text-slate-300">The library now covers common admin input primitives, selection patterns, validation states, uploads, and rich text editing so backend screens can be built without inventing new UI each time.</p>
+          </div>
+
+          <div class="mt-8 grid gap-5 xl:grid-cols-2">
+            <div class="rounded-[30px] border border-slate-200 p-5 dark:border-line-dark">
+              <p class="text-sm font-bold">Buttons</p>
+              <div class="mt-4 flex flex-wrap gap-3">
+                <button class="inline-flex items-center gap-2 rounded-2xl bg-brand px-5 py-3 text-sm font-bold text-white shadow-glow transition hover:bg-brand-deep">
+                  <span class="material-symbols-outlined text-base">add</span>Create entry
+                </button>
+                <button class="inline-flex items-center gap-2 rounded-2xl bg-accent px-5 py-3 text-sm font-bold text-white transition hover:opacity-90">
+                  <span class="material-symbols-outlined text-base">publish</span>Publish
+                </button>
+                <button class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-ink transition hover:border-brand hover:text-brand dark:border-line-dark dark:bg-slate-950/50 dark:text-white">
+                  <span class="material-symbols-outlined text-base">download</span>Export
+                </button>
+                <button class="inline-flex items-center gap-2 rounded-2xl border border-danger/20 bg-danger/10 px-5 py-3 text-sm font-bold text-danger transition hover:bg-danger hover:text-white">
+                  <span class="material-symbols-outlined text-base">delete</span>Delete
+                </button>
+                <button disabled class="inline-flex items-center gap-2 rounded-2xl bg-slate-200 px-5 py-3 text-sm font-bold text-slate-500 dark:bg-slate-800 dark:text-slate-500">
+                  <span class="material-symbols-outlined text-base">block</span>Disabled
+                </button>
+              </div>
+            </div>
+
+            <div class="rounded-[30px] border border-slate-200 p-5 dark:border-line-dark">
+              <p class="text-sm font-bold">Badges and chips</p>
+              <div class="mt-4 flex flex-wrap gap-3">
+                <span class="rounded-full bg-brand/10 px-4 py-2 text-sm font-bold text-brand dark:bg-brand/15 dark:text-emerald-200">Active</span>
+                <span class="rounded-full bg-accent/15 px-4 py-2 text-sm font-bold text-accent">Pending approval</span>
+                <span class="rounded-full bg-success/10 px-4 py-2 text-sm font-bold text-success">Synced</span>
+                <span class="rounded-full bg-warning/10 px-4 py-2 text-sm font-bold text-warning">At risk</span>
+                <span class="rounded-full bg-danger/10 px-4 py-2 text-sm font-bold text-danger">Rejected</span>
+                <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold dark:border-line-dark">
+                  <span class="inline-flex h-2 w-2 rounded-full bg-info"></span>Realtime
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+            <div class="grid gap-5">
+              <div class="rounded-[30px] border border-slate-200 p-5 dark:border-line-dark">
+                <div class="flex items-center justify-between">
+                  <p class="text-sm font-bold">Basic fields</p>
+                  <span class="rounded-full bg-brand/10 px-3 py-1 text-xs font-bold text-brand dark:bg-brand/15 dark:text-emerald-200">Inputs</span>
+                </div>
+                <div class="mt-5 grid gap-4 lg:grid-cols-2">
+                  <label class="grid gap-2">
+                    <span class="text-sm font-semibold">Project name</span>
+                    <input type="text" value="Atlas Commerce CMS" class="rounded-2xl border-slate-200 bg-white px-4 py-3 text-sm focus:border-brand focus:ring-brand/20 dark:border-line-dark dark:bg-slate-950/50" />
+                    <span class="text-xs text-ink-soft">Primary text input with helper copy.</span>
+                  </label>
+                  <label class="grid gap-2">
+                    <span class="text-sm font-semibold">Contact email</span>
+                    <input type="email" value="ops@atlas-admin.dev" class="rounded-2xl border-slate-200 bg-white px-4 py-3 text-sm focus:border-brand focus:ring-brand/20 dark:border-line-dark dark:bg-slate-950/50" />
+                    <span class="text-xs text-ink-soft">Use for owner assignment and notifications.</span>
+                  </label>
+                  <label class="grid gap-2">
+                    <span class="text-sm font-semibold">Phone number</span>
+                    <div class="flex rounded-2xl border border-slate-200 bg-white dark:border-line-dark dark:bg-slate-950/50">
+                      <span class="inline-flex items-center border-r border-slate-200 px-4 text-sm font-semibold text-ink-muted dark:border-line-dark dark:text-slate-400">+62</span>
+                      <input type="text" value="812 9988 2233" class="w-full border-0 bg-transparent px-4 py-3 text-sm focus:ring-0" />
+                    </div>
+                  </label>
+                  <label class="grid gap-2">
+                    <span class="text-sm font-semibold">Password</span>
+                    <div class="flex rounded-2xl border border-slate-200 bg-white dark:border-line-dark dark:bg-slate-950/50">
+                      <input type="password" value="atlas-password" class="w-full border-0 bg-transparent px-4 py-3 text-sm focus:ring-0" />
+                      <button class="px-4 text-ink-muted dark:text-slate-400">
+                        <span class="material-symbols-outlined text-base">visibility</span>
+                      </button>
+                    </div>
+                  </label>
+                  <label class="grid gap-2">
+                    <span class="text-sm font-semibold">Review date</span>
+                    <input type="date" value="2026-03-17" class="rounded-2xl border-slate-200 bg-white px-4 py-3 text-sm focus:border-brand focus:ring-brand/20 dark:border-line-dark dark:bg-slate-950/50" />
+                  </label>
+                  <label class="grid gap-2">
+                    <span class="text-sm font-semibold">Budget cap</span>
+                    <div class="flex rounded-2xl border border-slate-200 bg-white dark:border-line-dark dark:bg-slate-950/50">
+                      <span class="inline-flex items-center border-r border-slate-200 px-4 text-sm font-semibold text-ink-muted dark:border-line-dark dark:text-slate-400">$</span>
+                      <input type="text" value="12,500" class="w-full border-0 bg-transparent px-4 py-3 text-sm focus:ring-0" />
+                    </div>
+                  </label>
+                  <label class="grid gap-2 lg:col-span-2">
+                    <span class="text-sm font-semibold">Description</span>
+                    <textarea rows="4" class="rounded-2xl border-slate-200 bg-white px-4 py-3 text-sm focus:border-brand focus:ring-brand/20 dark:border-line-dark dark:bg-slate-950/50">Create a complete UI kit for tables, forms, dashboards, approvals, notifications, settings screens, and moderation workflows.</textarea>
+                  </label>
+                </div>
+              </div>
+
+              <div class="rounded-[30px] border border-slate-200 p-5 dark:border-line-dark">
+                <div class="flex items-center justify-between">
+                  <p class="text-sm font-bold">Field states</p>
+                  <span class="rounded-full bg-slate-900 px-3 py-1 text-xs font-bold text-white dark:bg-white dark:text-slate-900">Validation</span>
+                </div>
+                <div class="mt-5 grid gap-4 lg:grid-cols-2">
+                  <label class="grid gap-2">
+                    <span class="text-sm font-semibold">Default</span>
+                    <input type="text" value="Inventory threshold" class="rounded-2xl border-slate-200 bg-white px-4 py-3 text-sm dark:border-line-dark dark:bg-slate-950/50" />
+                  </label>
+                  <label class="grid gap-2">
+                    <span class="text-sm font-semibold text-success">Success state</span>
+                    <input type="text" value="seller-onboarding" class="rounded-2xl border-success bg-success/5 px-4 py-3 text-sm text-success focus:border-success focus:ring-success/20" />
+                    <span class="text-xs text-success">Slug is available.</span>
+                  </label>
+                  <label class="grid gap-2">
+                    <span class="text-sm font-semibold text-danger">Error state</span>
+                    <input type="text" value="atlas admin !" class="rounded-2xl border-danger bg-danger/5 px-4 py-3 text-sm text-danger focus:border-danger focus:ring-danger/20" />
+                    <span class="text-xs text-danger">Use letters, numbers, or dashes only.</span>
+                  </label>
+                  <label class="grid gap-2">
+                    <span class="text-sm font-semibold">Read only</span>
+                    <input readonly type="text" value="workspace-atlas-prod" class="rounded-2xl border-slate-200 bg-slate-100 px-4 py-3 text-sm text-ink-muted dark:border-line-dark dark:bg-slate-900/60 dark:text-slate-400" />
+                  </label>
+                  <label class="grid gap-2">
+                    <span class="text-sm font-semibold">Disabled</span>
+                    <input disabled type="text" value="Disabled field" class="rounded-2xl border-slate-200 bg-slate-100 px-4 py-3 text-sm text-slate-400 dark:border-line-dark dark:bg-slate-900/60" />
+                  </label>
+                  <label class="grid gap-2">
+                    <span class="text-sm font-semibold">Search input</span>
+                    <div class="flex items-center rounded-2xl border border-slate-200 bg-white px-4 dark:border-line-dark dark:bg-slate-950/50">
+                      <span class="material-symbols-outlined text-base text-ink-soft">search</span>
+                      <input type="text" value="warehouse jakarta" class="w-full border-0 bg-transparent px-3 py-3 text-sm focus:ring-0" />
+                      <span class="rounded-lg bg-canvas px-2 py-1 text-[11px] font-bold dark:bg-slate-800">/</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div class="rounded-[30px] border border-slate-200 p-5 dark:border-line-dark">
+                <div class="flex items-center justify-between">
+                  <p class="text-sm font-bold">Selects and combobox</p>
+                  <span class="rounded-full bg-accent/15 px-3 py-1 text-xs font-bold text-accent">Searchable</span>
+                </div>
+                <div class="mt-5 grid gap-5 lg:grid-cols-2">
+                  <div class="space-y-2">
+                    <span class="text-sm font-semibold">Native select</span>
+                    <select class="w-full rounded-2xl border-slate-200 bg-white px-4 py-3 text-sm focus:border-brand focus:ring-brand/20 dark:border-line-dark dark:bg-slate-950/50">
+                      <option>Operations</option>
+                      <option>Marketing</option>
+                      <option>Finance</option>
+                      <option>Procurement</option>
+                    </select>
+                  </div>
+                  <div class="space-y-2">
+                    <span class="text-sm font-semibold">Multi select</span>
+                    <div class="rounded-2xl border border-slate-200 bg-white p-3 dark:border-line-dark dark:bg-slate-950/50">
+                      <div class="flex flex-wrap gap-2">
+                        <span class="inline-flex items-center gap-1 rounded-full bg-brand/10 px-3 py-1 text-xs font-bold text-brand dark:bg-brand/15 dark:text-emerald-200">Inventory <span class="material-symbols-outlined !text-[14px]">close</span></span>
+                        <span class="inline-flex items-center gap-1 rounded-full bg-accent/15 px-3 py-1 text-xs font-bold text-accent">Reports <span class="material-symbols-outlined !text-[14px]">close</span></span>
+                        <input type="text" value="Add tag" class="min-w-[88px] flex-1 border-0 bg-transparent p-1 text-sm focus:ring-0" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="space-y-2 lg:col-span-2">
+                    <span class="text-sm font-semibold">Select with search dropdown</span>
+                    <div class="rounded-[26px] border border-slate-200 bg-white p-3 dark:border-line-dark dark:bg-slate-950/50">
+                      <div class="flex items-center gap-3 rounded-2xl border border-brand bg-brand/5 px-4 py-3 dark:border-brand/40 dark:bg-brand/10">
+                        <span class="material-symbols-outlined text-base text-brand">search</span>
+                        <input type="text" value="ware" class="w-full border-0 bg-transparent p-0 text-sm focus:ring-0" />
+                        <span class="rounded-full bg-brand/10 px-3 py-1 text-xs font-bold text-brand dark:bg-brand/20 dark:text-emerald-200">4 results</span>
+                      </div>
+                      <div class="mt-3 overflow-hidden rounded-2xl border border-slate-200 dark:border-line-dark">
+                        <div class="flex items-center justify-between bg-brand/10 px-4 py-3 text-sm dark:bg-brand/15">
+                          <span class="font-semibold text-brand dark:text-emerald-200">Warehouse Jakarta</span>
+                          <span class="material-symbols-outlined text-base text-brand dark:text-emerald-200">check</span>
+                        </div>
+                        <div class="flex items-center justify-between px-4 py-3 text-sm">
+                          <span>Warehouse Surabaya</span>
+                          <span class="text-ink-soft">Ready</span>
+                        </div>
+                        <div class="flex items-center justify-between bg-canvas-soft px-4 py-3 text-sm dark:bg-slate-900/50">
+                          <span>Warehouse Medan</span>
+                          <span class="text-ink-soft">Read only</span>
+                        </div>
+                        <div class="flex items-center justify-between px-4 py-3 text-sm">
+                          <span>Warehouse Makassar</span>
+                          <span class="text-ink-soft">Offline</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-[30px] border border-slate-200 p-5 dark:border-line-dark">
+                <div class="flex items-center justify-between">
+                  <p class="text-sm font-bold">WYSIWYG editor</p>
+                  <span class="rounded-full bg-info/10 px-3 py-1 text-xs font-bold text-info">Summernote</span>
+                </div>
+                <div class="mt-5 grid gap-5">
+                  <div class="rounded-[26px] border border-slate-200 p-4 dark:border-line-dark">
+                    <div class="mb-4 flex items-start justify-between gap-4">
+                      <div>
+                        <p class="text-sm font-semibold">Minimal toolbar</p>
+                        <p class="mt-1 text-sm text-ink-muted dark:text-slate-400">For short descriptions, CMS snippets, and operational notes.</p>
+                      </div>
+                      <span class="rounded-full bg-brand/10 px-3 py-1 text-xs font-bold text-brand dark:bg-brand/15 dark:text-emerald-200">Basic</span>
+                    </div>
+                    <div id="summernote-minimal">
+                      <h3>Operational update</h3>
+                      <p>Warehouse migration is in the final review stage. Logistics and support teams have aligned on the go-live checklist.</p>
+                      <ul>
+                        <li>Cutover scheduled for Friday, 22:00 WIB</li>
+                        <li>Priority routes already remapped</li>
+                        <li>Fallback inventory sync remains active</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div class="rounded-[26px] border border-slate-200 p-4 dark:border-line-dark">
+                    <div class="mb-4 flex items-start justify-between gap-4">
+                      <div>
+                        <p class="text-sm font-semibold">Full toolbar</p>
+                        <p class="mt-1 text-sm text-ink-muted dark:text-slate-400">For article content, policy pages, campaign landing copy, and rich CMS body blocks.</p>
+                      </div>
+                      <span class="rounded-full bg-accent/15 px-3 py-1 text-xs font-bold text-accent">Advanced</span>
+                    </div>
+                    <div id="summernote-full">
+                      <h2>Warehouse migration release notes</h2>
+                      <p>The new routing engine improves regional stock balancing and shortens confirmation times for high-volume storefronts.</p>
+                      <p><strong>What changed:</strong> routing rules are now grouped per region, manual overrides are logged automatically, and bulk stock updates can be reviewed before publish.</p>
+                      <blockquote>Weekend pickup windows have been extended to support same-day order processing in priority cities.</blockquote>
+                      <p><a href="#">Read the internal rollout checklist</a> before publishing the final migration notice to all operators.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid gap-5">
+              <div class="rounded-[30px] border border-slate-200 p-5 dark:border-line-dark">
+                <div class="flex items-center justify-between">
+                  <p class="text-sm font-bold">Selection and filters</p>
+                  <span class="rounded-full bg-brand/10 px-3 py-1 text-xs font-bold text-brand dark:bg-brand/15 dark:text-emerald-200">Choice UI</span>
+                </div>
+                <div class="mt-5 space-y-5">
+                  <div class="rounded-[24px] bg-canvas-soft p-3 dark:bg-slate-950/50">
+                    <div class="flex flex-wrap gap-2">
+                      <button class="rounded-2xl bg-brand px-4 py-2 text-sm font-bold text-white">All items</button>
+                      <button class="rounded-2xl px-4 py-2 text-sm font-semibold text-ink-muted hover:bg-white dark:text-slate-300 dark:hover:bg-slate-900">Draft</button>
+                      <button class="rounded-2xl px-4 py-2 text-sm font-semibold text-ink-muted hover:bg-white dark:text-slate-300 dark:hover:bg-slate-900">Scheduled</button>
+                      <button class="rounded-2xl px-4 py-2 text-sm font-semibold text-ink-muted hover:bg-white dark:text-slate-300 dark:hover:bg-slate-900">Archived</button>
+                    </div>
+                  </div>
+
+                  <div class="grid gap-3">
+                    <p class="text-sm font-semibold">Radio cards</p>
+                    <label class="flex items-start gap-3 rounded-[22px] border border-brand bg-brand/5 p-4 dark:border-brand/30 dark:bg-brand/10">
+                      <input checked type="radio" name="density" class="mt-1 border-slate-300 text-brand focus:ring-brand" />
+                      <span>
+                        <span class="block text-sm font-semibold">Comfortable density</span>
+                        <span class="block text-sm text-ink-muted dark:text-slate-400">Suitable for mixed dashboards and forms.</span>
+                      </span>
+                    </label>
+                    <label class="flex items-start gap-3 rounded-[22px] border border-slate-200 p-4 dark:border-line-dark">
+                      <input type="radio" name="density" class="mt-1 border-slate-300 text-brand focus:ring-brand" />
+                      <span>
+                        <span class="block text-sm font-semibold">Compact density</span>
+                        <span class="block text-sm text-ink-muted dark:text-slate-400">Tighter rows for experienced admin operators.</span>
+                      </span>
+                    </label>
+                  </div>
+
+                  <div class="grid gap-3">
+                    <p class="text-sm font-semibold">Checklist group</p>
+                    <label class="flex items-start gap-3 rounded-[22px] border border-slate-200 p-4 dark:border-line-dark">
+                      <input checked type="checkbox" class="mt-1 rounded border-slate-300 text-brand focus:ring-brand" />
+                      <span>
+                        <span class="block text-sm font-semibold">Enable approval queue</span>
+                        <span class="block text-sm text-ink-muted dark:text-slate-400">Require two-step verification before publish.</span>
+                      </span>
+                    </label>
+                    <label class="flex items-start gap-3 rounded-[22px] border border-slate-200 p-4 dark:border-line-dark">
+                      <input type="checkbox" class="mt-1 rounded border-slate-300 text-brand focus:ring-brand" />
+                      <span>
+                        <span class="block text-sm font-semibold">Allow bulk import</span>
+                        <span class="block text-sm text-ink-muted dark:text-slate-400">Import records from CSV and schedule mapping later.</span>
+                      </span>
+                    </label>
+                    <label class="flex items-start gap-3 rounded-[22px] border border-slate-200 p-4 opacity-70 dark:border-line-dark">
+                      <input checked disabled type="checkbox" class="mt-1 rounded border-slate-300 text-brand" />
+                      <span>
+                        <span class="block text-sm font-semibold">Audit logging</span>
+                        <span class="block text-sm text-ink-muted dark:text-slate-400">Mandatory system setting, cannot be disabled.</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-[30px] border border-slate-200 p-5 dark:border-line-dark">
+                <div class="flex items-center justify-between">
+                  <p class="text-sm font-bold">Tabs and nav tabs</p>
+                  <span class="rounded-full bg-info/10 px-3 py-1 text-xs font-bold text-info">Navigation</span>
+                </div>
+                <div class="mt-5 space-y-5">
+                  <div class="space-y-3">
+                    <p class="text-sm font-semibold">Underline tabs</p>
+                    <div class="flex flex-wrap gap-6 border-b border-slate-200 dark:border-line-dark">
+                      <button class="border-b-2 border-brand pb-3 text-sm font-bold text-brand dark:text-emerald-200">Overview</button>
+                      <button class="border-b-2 border-transparent pb-3 text-sm font-semibold text-ink-muted dark:text-slate-300">Orders</button>
+                      <button class="border-b-2 border-transparent pb-3 text-sm font-semibold text-ink-muted dark:text-slate-300">Activity</button>
+                      <button class="border-b-2 border-transparent pb-3 text-sm font-semibold text-ink-muted dark:text-slate-300">Settings</button>
+                    </div>
+                    <div class="rounded-[22px] bg-canvas-soft p-4 text-sm text-ink-muted dark:bg-slate-950/50 dark:text-slate-300">
+                      Use this variant for page-level sections where users compare datasets or settings within one module.
+                    </div>
+                  </div>
+
+                  <div class="space-y-3">
+                    <p class="text-sm font-semibold">Pill nav tabs</p>
+                    <div class="inline-flex flex-wrap gap-2 rounded-[22px] bg-canvas p-2 dark:bg-slate-950/60">
+                      <button class="rounded-2xl bg-brand px-4 py-2 text-sm font-bold text-white">General</button>
+                      <button class="rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-ink shadow-sm dark:bg-slate-900 dark:text-slate-200">Permissions</button>
+                      <button class="rounded-2xl px-4 py-2 text-sm font-semibold text-ink-muted dark:text-slate-300">Billing</button>
+                      <button class="rounded-2xl px-4 py-2 text-sm font-semibold text-ink-muted dark:text-slate-300">Audit log</button>
+                    </div>
+                  </div>
+
+                  <div class="space-y-3">
+                    <p class="text-sm font-semibold">Vertical nav tabs</p>
+                    <div class="grid gap-3 sm:grid-cols-[180px_minmax(0,1fr)]">
+                      <div class="rounded-[22px] bg-canvas-soft p-2 dark:bg-slate-950/50">
+                        <button class="flex w-full items-center justify-between rounded-2xl bg-white px-4 py-3 text-left text-sm font-bold text-brand shadow-sm dark:bg-slate-900 dark:text-emerald-200">
+                          Profile
+                          <span class="material-symbols-outlined text-base">chevron_right</span>
+                        </button>
+                        <button class="flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-sm font-semibold text-ink-muted dark:text-slate-300">
+                          Security
+                          <span class="material-symbols-outlined text-base">chevron_right</span>
+                        </button>
+                        <button class="flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-sm font-semibold text-ink-muted dark:text-slate-300">
+                          Notifications
+                          <span class="material-symbols-outlined text-base">chevron_right</span>
+                        </button>
+                      </div>
+                      <div class="rounded-[22px] border border-slate-200 p-4 dark:border-line-dark">
+                        <p class="text-sm font-bold">Tab content panel</p>
+                        <p class="mt-2 text-sm text-ink-muted dark:text-slate-400">Best for settings screens, account pages, and detail views with secondary navigation on the left.</p>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                          <span class="rounded-full bg-success/10 px-3 py-1 text-xs font-bold text-success">Status: active</span>
+                          <span class="rounded-full bg-brand/10 px-3 py-1 text-xs font-bold text-brand dark:bg-brand/15 dark:text-emerald-200">Last sync: 2m ago</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-[30px] border border-slate-200 p-5 dark:border-line-dark">
+                <div class="flex items-center justify-between">
+                  <p class="text-sm font-bold">Switches and ranged inputs</p>
+                  <span class="rounded-full bg-warning/10 px-3 py-1 text-xs font-bold text-warning">Settings</span>
+                </div>
+                <div class="mt-5 space-y-5">
+                  <div class="flex items-center justify-between rounded-[24px] border border-slate-200 p-4 dark:border-line-dark">
+                    <div>
+                      <p class="text-sm font-semibold">Realtime alerts</p>
+                      <p class="text-sm text-ink-muted dark:text-slate-400">Send notification when inventory drops below threshold.</p>
+                    </div>
+                    <button class="relative h-8 w-14 rounded-full bg-brand/20">
+                      <span class="absolute right-1 top-1 h-6 w-6 rounded-full bg-brand"></span>
+                    </button>
+                  </div>
+
+                  <div class="rounded-[24px] border border-slate-200 p-4 dark:border-line-dark">
+                    <p class="text-sm font-semibold">Segmented control</p>
+                    <div class="mt-3 inline-flex rounded-2xl bg-canvas p-1 dark:bg-slate-950/60">
+                      <button class="rounded-2xl bg-white px-4 py-2 text-sm font-bold shadow-sm dark:bg-slate-800">Grid</button>
+                      <button class="rounded-2xl px-4 py-2 text-sm font-semibold text-ink-muted dark:text-slate-300">List</button>
+                      <button class="rounded-2xl px-4 py-2 text-sm font-semibold text-ink-muted dark:text-slate-300">Split</button>
+                    </div>
+                  </div>
+
+                  <div class="rounded-[24px] border border-slate-200 p-4 dark:border-line-dark">
+                    <div class="flex items-center justify-between">
+                      <p class="text-sm font-semibold">Risk threshold</p>
+                      <span class="text-sm font-bold text-brand dark:text-emerald-200">72%</span>
+                    </div>
+                    <div class="mt-4 h-2 rounded-full bg-brand/10">
+                      <div class="relative h-2 w-[72%] rounded-full bg-brand">
+                        <span class="absolute right-0 top-1/2 h-5 w-5 -translate-y-1/2 rounded-full border-4 border-white bg-brand shadow dark:border-slate-900"></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="rounded-[24px] border border-slate-200 p-4 dark:border-line-dark">
+                    <p class="text-sm font-semibold">Stepper / quantity input</p>
+                    <div class="mt-3 inline-flex items-center rounded-2xl border border-slate-200 dark:border-line-dark">
+                      <button class="px-4 py-3 text-lg font-semibold text-ink-muted dark:text-slate-300">-</button>
+                      <span class="border-x border-slate-200 px-5 py-3 text-sm font-bold dark:border-line-dark">24</span>
+                      <button class="px-4 py-3 text-lg font-semibold text-ink-muted dark:text-slate-300">+</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-[30px] border border-slate-200 p-5 dark:border-line-dark">
+                <div class="flex items-center justify-between">
+                  <p class="text-sm font-bold">Upload and attachments</p>
+                  <span class="rounded-full bg-success/10 px-3 py-1 text-xs font-bold text-success">Media</span>
+                </div>
+                <div class="mt-5 space-y-4">
+                  <div class="rounded-[26px] border-2 border-dashed border-brand/30 bg-brand/5 p-6 text-center dark:border-brand/40 dark:bg-brand/10">
+                    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-brand shadow-sm dark:bg-slate-900">
+                      <span class="material-symbols-outlined">upload_file</span>
+                    </div>
+                    <p class="mt-4 text-sm font-bold">Drag and drop files here</p>
+                    <p class="mt-2 text-sm text-ink-muted dark:text-slate-400">PNG, JPG, PDF up to 25 MB. Use for banners, invoices, or product assets.</p>
+                    <button class="mt-4 rounded-2xl bg-brand px-4 py-3 text-sm font-bold text-white">Browse file</button>
+                  </div>
+                  <div class="rounded-[24px] border border-slate-200 p-4 dark:border-line-dark">
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-3">
+                        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-danger/10 text-danger">
+                          <span class="material-symbols-outlined text-base">picture_as_pdf</span>
+                        </div>
+                        <div>
+                          <p class="text-sm font-semibold">warehouse-migration-plan.pdf</p>
+                          <p class="text-xs text-ink-muted dark:text-slate-400">2.4 MB uploaded just now</p>
+                        </div>
+                      </div>
+                      <button class="text-sm font-bold text-danger">Remove</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-[30px] border border-slate-200 p-5 dark:border-line-dark">
+                <div class="flex items-center justify-between">
+                  <p class="text-sm font-bold">Checklist panel</p>
+                  <span class="rounded-full bg-info/10 px-3 py-1 text-xs font-bold text-info">Task flow</span>
+                </div>
+                <div class="mt-5 space-y-3">
+                  <div class="flex items-center justify-between rounded-[22px] bg-canvas-soft px-4 py-3 dark:bg-slate-950/50">
+                    <div class="flex items-center gap-3">
+                      <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-success text-white">
+                        <span class="material-symbols-outlined !text-[16px]">check</span>
+                      </span>
+                      <span class="text-sm font-semibold">Content reviewed</span>
+                    </div>
+                    <span class="text-xs font-bold text-success">Done</span>
+                  </div>
+                  <div class="flex items-center justify-between rounded-[22px] bg-canvas-soft px-4 py-3 dark:bg-slate-950/50">
+                    <div class="flex items-center gap-3">
+                      <span class="inline-flex h-6 w-6 items-center justify-center rounded-full border-2 border-brand"></span>
+                      <span class="text-sm font-semibold">Legal sign-off</span>
+                    </div>
+                    <span class="text-xs font-bold text-warning">Waiting</span>
+                  </div>
+                  <div class="flex items-center justify-between rounded-[22px] bg-canvas-soft px-4 py-3 opacity-70 dark:bg-slate-950/50">
+                    <div class="flex items-center gap-3">
+                      <span class="inline-flex h-6 w-6 items-center justify-center rounded-full border-2 border-slate-300 dark:border-slate-700"></span>
+                      <span class="text-sm font-semibold">Publish to storefront</span>
+                    </div>
+                    <span class="text-xs font-bold text-ink-soft">Locked</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="data-display" class="mt-6 grid gap-5 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+          <div class="rounded-[36px] border border-white/70 bg-white/80 p-6 shadow-panel dark:border-line-dark dark:bg-canvas-panel/80 sm:p-8">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs font-bold uppercase tracking-[0.22em] text-brand dark:text-emerald-200">Data display</p>
+                <h3 class="mt-2 font-display text-3xl font-bold">Cards, metrics, charts, and table states.</h3>
+              </div>
+              <button class="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold dark:border-line-dark">Last 30 days</button>
+            </div>
+
+            <div class="mt-8 grid gap-4 md:grid-cols-3">
+              <div class="rounded-[28px] border border-slate-200 bg-canvas-soft p-5 dark:border-line-dark dark:bg-slate-950/50">
+                <p class="text-sm text-ink-muted dark:text-slate-400">Revenue</p>
+                <p class="mt-3 font-display text-3xl font-bold">$248.9K</p>
+                <p class="mt-3 inline-flex rounded-full bg-success/10 px-3 py-1 text-xs font-bold text-success">+14.2% vs last month</p>
+              </div>
+              <div class="rounded-[28px] border border-slate-200 bg-canvas-soft p-5 dark:border-line-dark dark:bg-slate-950/50">
+                <p class="text-sm text-ink-muted dark:text-slate-400">Open approvals</p>
+                <p class="mt-3 font-display text-3xl font-bold">126</p>
+                <p class="mt-3 inline-flex rounded-full bg-warning/10 px-3 py-1 text-xs font-bold text-warning">Needs attention</p>
+              </div>
+              <div class="rounded-[28px] border border-slate-200 bg-canvas-soft p-5 dark:border-line-dark dark:bg-slate-950/50">
+                <p class="text-sm text-ink-muted dark:text-slate-400">Sync uptime</p>
+                <p class="mt-3 font-display text-3xl font-bold">99.94%</p>
+                <p class="mt-3 inline-flex rounded-full bg-brand/10 px-3 py-1 text-xs font-bold text-brand dark:bg-brand/15 dark:text-emerald-200">Stable</p>
+              </div>
+            </div>
+
+            <div class="mt-6 grid gap-5 xl:grid-cols-[minmax(0,1.05fr)_minmax(280px,0.95fr)]">
+              <div class="rounded-[30px] border border-slate-200 p-5 dark:border-line-dark">
+                <div class="flex items-center justify-between">
+                  <p class="text-sm font-bold">Activity overview</p>
+                  <p class="text-sm text-ink-muted dark:text-slate-400">Weekly</p>
+                </div>
+                <div class="mt-6 flex h-64 items-end gap-3">
+                  <div class="flex flex-1 flex-col items-center gap-3">
+                    <div class="h-[34%] w-full rounded-t-[18px] bg-brand/15">
+                      <div class="h-full w-full origin-bottom animate-pulsebar rounded-t-[18px] bg-brand"></div>
+                    </div>
+                    <span class="text-xs font-semibold text-ink-soft">Mon</span>
+                  </div>
+                  <div class="flex flex-1 flex-col items-center gap-3">
+                    <div class="h-[62%] w-full rounded-t-[18px] bg-brand/15">
+                      <div class="h-full w-full origin-bottom animate-pulsebar rounded-t-[18px] bg-brand [animation-delay:0.2s]"></div>
+                    </div>
+                    <span class="text-xs font-semibold text-ink-soft">Tue</span>
+                  </div>
+                  <div class="flex flex-1 flex-col items-center gap-3">
+                    <div class="h-[48%] w-full rounded-t-[18px] bg-brand/15">
+                      <div class="h-full w-full origin-bottom animate-pulsebar rounded-t-[18px] bg-brand [animation-delay:0.4s]"></div>
+                    </div>
+                    <span class="text-xs font-semibold text-ink-soft">Wed</span>
+                  </div>
+                  <div class="flex flex-1 flex-col items-center gap-3">
+                    <div class="h-[74%] w-full rounded-t-[18px] bg-accent/15">
+                      <div class="h-full w-full origin-bottom animate-pulsebar rounded-t-[18px] bg-accent [animation-delay:0.6s]"></div>
+                    </div>
+                    <span class="text-xs font-semibold text-ink-soft">Thu</span>
+                  </div>
+                  <div class="flex flex-1 flex-col items-center gap-3">
+                    <div class="h-[56%] w-full rounded-t-[18px] bg-accent/15">
+                      <div class="h-full w-full origin-bottom animate-pulsebar rounded-t-[18px] bg-accent [animation-delay:0.8s]"></div>
+                    </div>
+                    <span class="text-xs font-semibold text-ink-soft">Fri</span>
+                  </div>
+                  <div class="flex flex-1 flex-col items-center gap-3">
+                    <div class="h-[82%] w-full rounded-t-[18px] bg-brand/15">
+                      <div class="h-full w-full origin-bottom animate-pulsebar rounded-t-[18px] bg-brand [animation-delay:1s]"></div>
+                    </div>
+                    <span class="text-xs font-semibold text-ink-soft">Sat</span>
+                  </div>
+                  <div class="flex flex-1 flex-col items-center gap-3">
+                    <div class="h-[66%] w-full rounded-t-[18px] bg-accent/15">
+                      <div class="h-full w-full origin-bottom animate-pulsebar rounded-t-[18px] bg-accent [animation-delay:1.2s]"></div>
+                    </div>
+                    <span class="text-xs font-semibold text-ink-soft">Sun</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-[30px] border border-slate-200 p-5 dark:border-line-dark">
+                <p class="text-sm font-bold">Progress modules</p>
+                <div class="mt-5 space-y-4">
+                  <div>
+                    <div class="mb-2 flex items-center justify-between text-sm">
+                      <span class="font-semibold">Inventory sync</span>
+                      <span class="text-ink-muted dark:text-slate-400">94%</span>
+                    </div>
+                    <div class="h-3 rounded-full bg-brand/10"><div class="h-3 w-[94%] rounded-full bg-brand"></div></div>
+                  </div>
+                  <div>
+                    <div class="mb-2 flex items-center justify-between text-sm">
+                      <span class="font-semibold">Content approvals</span>
+                      <span class="text-ink-muted dark:text-slate-400">67%</span>
+                    </div>
+                    <div class="h-3 rounded-full bg-accent/10"><div class="h-3 w-[67%] rounded-full bg-accent"></div></div>
+                  </div>
+                  <div>
+                    <div class="mb-2 flex items-center justify-between text-sm">
+                      <span class="font-semibold">QA checklist</span>
+                      <span class="text-ink-muted dark:text-slate-400">81%</span>
+                    </div>
+                    <div class="h-3 rounded-full bg-info/10"><div class="h-3 w-[81%] rounded-full bg-info"></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-[36px] border border-white/70 bg-white/80 p-6 shadow-panel dark:border-line-dark dark:bg-canvas-panel/80 sm:p-8">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs font-bold uppercase tracking-[0.22em] text-brand dark:text-emerald-200">Table system</p>
+                <h3 class="mt-2 font-display text-3xl font-bold">Dense, readable admin table.</h3>
+              </div>
+              <button class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold dark:border-line-dark">
+                <span class="material-symbols-outlined text-base">tune</span>Filters
+              </button>
+            </div>
+
+            <div class="mt-6 overflow-hidden rounded-[28px] border border-slate-200 dark:border-line-dark">
+              <table class="min-w-full divide-y divide-slate-200 text-left text-sm dark:divide-line-dark">
+                <thead class="bg-canvas-soft dark:bg-slate-950/40">
+                  <tr>
+                    <th class="px-5 py-4 font-bold">Campaign</th>
+                    <th class="px-5 py-4 font-bold">Owner</th>
+                    <th class="px-5 py-4 font-bold">Status</th>
+                    <th class="px-5 py-4 font-bold">Budget</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 dark:divide-line-dark">
+                  <tr class="bg-white/70 dark:bg-transparent">
+                    <td class="px-5 py-4 font-semibold">Ramadan promo refresh</td>
+                    <td class="px-5 py-4 text-ink-muted dark:text-slate-300">Dita A.</td>
+                    <td class="px-5 py-4"><span class="rounded-full bg-success/10 px-3 py-1 text-xs font-bold text-success">Live</span></td>
+                    <td class="px-5 py-4 font-semibold">$12,400</td>
+                  </tr>
+                  <tr class="bg-canvas-soft/70 dark:bg-slate-950/20">
+                    <td class="px-5 py-4 font-semibold">Partner onboarding email</td>
+                    <td class="px-5 py-4 text-ink-muted dark:text-slate-300">Rafi K.</td>
+                    <td class="px-5 py-4"><span class="rounded-full bg-warning/10 px-3 py-1 text-xs font-bold text-warning">Review</span></td>
+                    <td class="px-5 py-4 font-semibold">$4,890</td>
+                  </tr>
+                  <tr class="bg-white/70 dark:bg-transparent">
+                    <td class="px-5 py-4 font-semibold">Warehouse migration banner</td>
+                    <td class="px-5 py-4 text-ink-muted dark:text-slate-300">Sinta P.</td>
+                    <td class="px-5 py-4"><span class="rounded-full bg-brand/10 px-3 py-1 text-xs font-bold text-brand dark:bg-brand/15 dark:text-emerald-200">Scheduled</span></td>
+                    <td class="px-5 py-4 font-semibold">$7,110</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="mt-6 rounded-[28px] border border-dashed border-slate-300 p-6 text-center dark:border-line-dark">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand/10 text-brand dark:bg-brand/15 dark:text-emerald-200">
+                <span class="material-symbols-outlined">folder_open</span>
+              </div>
+              <p class="mt-4 text-base font-bold">Empty state pattern</p>
+              <p class="mt-2 text-sm text-ink-muted dark:text-slate-400">Use for tables with no filters result, missing integrations, or newly created modules.</p>
+              <button class="mt-4 rounded-2xl bg-brand px-4 py-3 text-sm font-bold text-white">Add first record</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="feedback" class="mt-6 rounded-[36px] border border-white/70 bg-white/80 p-6 shadow-panel dark:border-line-dark dark:bg-canvas-panel/80 sm:p-8">
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-[0.22em] text-brand dark:text-emerald-200">Feedback patterns</p>
+              <h3 class="mt-2 font-display text-3xl font-bold">Alerts, toasts, and modal confirmation.</h3>
+            </div>
+            <p class="max-w-xl text-sm leading-6 text-ink-muted dark:text-slate-300">Feedback styles prioritize system confidence, not noise. Severity is communicated with color, icon, and concise message.</p>
+          </div>
+
+          <div class="mt-8 grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(420px,0.9fr)]">
+            <div class="space-y-4">
+              <div class="flex items-start gap-4 rounded-[26px] border border-success/20 bg-success/10 p-5">
+                <div class="mt-1 flex h-10 w-10 items-center justify-center rounded-2xl bg-success text-white">
+                  <span class="material-symbols-outlined">check_circle</span>
+                </div>
+                <div>
+                  <p class="font-bold text-success">Changes published successfully</p>
+                  <p class="mt-1 text-sm text-ink-muted">All storefront regions are now using the latest settings configuration.</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-4 rounded-[26px] border border-warning/20 bg-warning/10 p-5">
+                <div class="mt-1 flex h-10 w-10 items-center justify-center rounded-2xl bg-warning text-white">
+                  <span class="material-symbols-outlined">warning</span>
+                </div>
+                <div>
+                  <p class="font-bold text-warning">Approval queue is delayed</p>
+                  <p class="mt-1 text-sm text-ink-muted">Some items are waiting more than 24 hours and should be reassigned.</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-4 rounded-[26px] border border-danger/20 bg-danger/10 p-5">
+                <div class="mt-1 flex h-10 w-10 items-center justify-center rounded-2xl bg-danger text-white">
+                  <span class="material-symbols-outlined">error</span>
+                </div>
+                <div>
+                  <p class="font-bold text-danger">Sync failed on one warehouse node</p>
+                  <p class="mt-1 text-sm text-ink-muted">Fallback inventory is active while the connection is being restored.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid gap-5">
+              <div class="rounded-[30px] border border-slate-200 p-5 dark:border-line-dark">
+                <div class="flex items-center justify-between">
+                  <p class="text-sm font-bold">Toast stack</p>
+                  <span class="rounded-full bg-ink px-3 py-1 text-xs font-bold text-white dark:bg-white dark:text-slate-900">3 live</span>
+                </div>
+                <div class="mt-4 space-y-3">
+                  <div class="flex items-start gap-3 rounded-[22px] bg-slate-900 p-4 text-white">
+                    <span class="material-symbols-outlined text-success">task_alt</span>
+                    <div class="text-sm">
+                      <p class="font-bold">Autosave completed</p>
+                      <p class="text-slate-300">Product configuration was saved 12 seconds ago.</p>
+                    </div>
+                  </div>
+                  <div class="flex items-start gap-3 rounded-[22px] border border-slate-200 bg-white p-4 dark:border-line-dark dark:bg-slate-950/40">
+                    <span class="material-symbols-outlined text-warning">schedule</span>
+                    <div class="text-sm">
+                      <p class="font-bold">Scheduled publish queued</p>
+                      <p class="text-ink-muted dark:text-slate-400">The campaign will go live at 06:00 WIB.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-[30px] border border-slate-200 bg-canvas-soft p-6 dark:border-line-dark dark:bg-slate-950/50">
+                <p class="text-sm font-bold">Modal preview</p>
+                <div class="mt-4 rounded-[28px] border border-slate-200 bg-white p-6 shadow-panel dark:border-line-dark dark:bg-canvas-panel">
+                  <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-danger/10 text-danger">
+                    <span class="material-symbols-outlined">delete_forever</span>
+                  </div>
+                  <h4 class="mt-5 font-display text-2xl font-bold">Delete this workspace?</h4>
+                  <p class="mt-2 text-sm leading-6 text-ink-muted dark:text-slate-300">This action removes members, API keys, schedules, and audit access for the selected workspace.</p>
+                  <div class="mt-6 flex gap-3">
+                    <button class="flex-1 rounded-2xl border border-slate-200 px-4 py-3 text-sm font-bold dark:border-line-dark">Cancel</button>
+                    <button class="flex-1 rounded-2xl bg-danger px-4 py-3 text-sm font-bold text-white">Delete workspace</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="layout" class="mt-6 mb-8 rounded-[36px] border border-white/70 bg-white/80 p-6 shadow-panel dark:border-line-dark dark:bg-canvas-panel/80 sm:p-8">
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-[0.22em] text-brand dark:text-emerald-200">Layout patterns</p>
+              <h3 class="mt-2 font-display text-3xl font-bold">Admin shell, workspace navigation, and content zones.</h3>
+            </div>
+            <p class="max-w-xl text-sm leading-6 text-ink-muted dark:text-slate-300">This shell pattern balances persistent navigation with a soft content canvas suited for data-intensive Laravel screens.</p>
+          </div>
+
+          <div class="mt-8 overflow-hidden rounded-[34px] border border-slate-200 dark:border-line-dark">
+            <div class="grid min-h-[560px] lg:grid-cols-[220px_minmax(0,1fr)]">
+              <div class="border-b border-slate-200 bg-canvas-soft p-5 dark:border-line-dark dark:bg-slate-950/50 lg:border-b-0 lg:border-r">
+                <div class="flex items-center gap-3">
+                  <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand text-white">
+                    <span class="material-symbols-outlined">widgets</span>
+                  </div>
+                  <div>
+                    <p class="font-display text-lg font-bold">Atlas</p>
+                    <p class="text-xs text-ink-muted dark:text-slate-400">Workspace shell</p>
+                  </div>
+                </div>
+                <div class="mt-6 space-y-2">
+                  <div class="flex items-center gap-3 rounded-2xl bg-brand px-4 py-3 text-sm font-bold text-white">
+                    <span class="material-symbols-outlined text-base">space_dashboard</span>Overview
+                  </div>
+                  <div class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-ink-muted dark:text-slate-300">
+                    <span class="material-symbols-outlined text-base">inventory_2</span>Inventory
+                  </div>
+                  <div class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-ink-muted dark:text-slate-300">
+                    <span class="material-symbols-outlined text-base">receipt_long</span>Orders
+                  </div>
+                  <div class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-ink-muted dark:text-slate-300">
+                    <span class="material-symbols-outlined text-base">settings</span>Settings
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-white/70 p-5 dark:bg-canvas-panel/70">
+                <div class="flex flex-col gap-4 border-b border-slate-200 pb-5 dark:border-line-dark lg:flex-row lg:items-center lg:justify-between">
+                  <div>
+                    <p class="text-xs font-bold uppercase tracking-[0.22em] text-ink-soft">Toolbar</p>
+                    <h4 class="mt-2 font-display text-2xl font-bold">Content dashboard shell</h4>
+                  </div>
+                  <div class="flex flex-wrap gap-3">
+                    <button class="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold dark:border-line-dark">Share</button>
+                    <button class="rounded-2xl bg-brand px-4 py-3 text-sm font-bold text-white">Create module</button>
+                  </div>
+                </div>
+
+                <div class="mt-5 grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)]">
+                  <div class="grid gap-4">
+                    <div class="grid gap-4 md:grid-cols-3">
+                      <div class="rounded-[26px] border border-slate-200 bg-canvas-soft p-5 dark:border-line-dark dark:bg-slate-950/40">
+                        <p class="text-sm text-ink-muted dark:text-slate-400">Active stores</p>
+                        <p class="mt-3 font-display text-3xl font-bold">24</p>
+                      </div>
+                      <div class="rounded-[26px] border border-slate-200 bg-canvas-soft p-5 dark:border-line-dark dark:bg-slate-950/40">
+                        <p class="text-sm text-ink-muted dark:text-slate-400">Open tickets</p>
+                        <p class="mt-3 font-display text-3xl font-bold">09</p>
+                      </div>
+                      <div class="rounded-[26px] border border-slate-200 bg-canvas-soft p-5 dark:border-line-dark dark:bg-slate-950/40">
+                        <p class="text-sm text-ink-muted dark:text-slate-400">Avg. response</p>
+                        <p class="mt-3 font-display text-3xl font-bold">18m</p>
+                      </div>
+                    </div>
+
+                    <div class="rounded-[30px] border border-slate-200 p-5 dark:border-line-dark">
+                      <div class="flex items-center justify-between">
+                        <p class="text-sm font-bold">Kanban-inspired workflow strip</p>
+                        <span class="text-sm text-ink-muted dark:text-slate-400">Optional module</span>
+                      </div>
+                      <div class="mt-4 grid gap-4 md:grid-cols-3">
+                        <div class="rounded-[24px] bg-canvas-soft p-4 dark:bg-slate-950/50">
+                          <p class="text-sm font-bold">Draft</p>
+                          <div class="mt-3 rounded-[20px] bg-white p-4 dark:bg-slate-900">
+                            <p class="text-sm font-semibold">Pricing update note</p>
+                            <p class="mt-1 text-xs text-ink-muted dark:text-slate-400">Needs copy review</p>
+                          </div>
+                        </div>
+                        <div class="rounded-[24px] bg-canvas-soft p-4 dark:bg-slate-950/50">
+                          <p class="text-sm font-bold">Review</p>
+                          <div class="mt-3 rounded-[20px] bg-white p-4 dark:bg-slate-900">
+                            <p class="text-sm font-semibold">Seller onboarding form</p>
+                            <p class="mt-1 text-xs text-ink-muted dark:text-slate-400">Waiting legal sign-off</p>
+                          </div>
+                        </div>
+                        <div class="rounded-[24px] bg-canvas-soft p-4 dark:bg-slate-950/50">
+                          <p class="text-sm font-bold">Done</p>
+                          <div class="mt-3 rounded-[20px] bg-white p-4 dark:bg-slate-900">
+                            <p class="text-sm font-semibold">Flash sale alert rules</p>
+                            <p class="mt-1 text-xs text-ink-muted dark:text-slate-400">Published today</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="rounded-[30px] border border-slate-200 bg-canvas-soft p-5 dark:border-line-dark dark:bg-slate-950/40">
+                    <p class="text-sm font-bold">Activity rail</p>
+                    <div class="mt-5 space-y-4">
+                      <div class="flex gap-3">
+                        <div class="mt-1 h-10 w-10 rounded-2xl bg-brand/10 text-brand dark:bg-brand/15 dark:text-emerald-200 flex items-center justify-center">
+                          <span class="material-symbols-outlined text-base">inventory</span>
+                        </div>
+                        <div>
+                          <p class="text-sm font-semibold">Inventory threshold updated</p>
+                          <p class="text-sm text-ink-muted dark:text-slate-400">Jakarta warehouse now alerts at 120 units.</p>
+                        </div>
+                      </div>
+                      <div class="flex gap-3">
+                        <div class="mt-1 h-10 w-10 rounded-2xl bg-accent/15 text-accent flex items-center justify-center">
+                          <span class="material-symbols-outlined text-base">approval</span>
+                        </div>
+                        <div>
+                          <p class="text-sm font-semibold">Campaign sent for approval</p>
+                          <p class="text-sm text-ink-muted dark:text-slate-400">Assigned to regional marketing leads.</p>
+                        </div>
+                      </div>
+                      <div class="flex gap-3">
+                        <div class="mt-1 h-10 w-10 rounded-2xl bg-info/10 text-info flex items-center justify-center">
+                          <span class="material-symbols-outlined text-base">insights</span>
+                        </div>
+                        <div>
+                          <p class="text-sm font-semibold">Weekly report generated</p>
+                          <p class="text-sm text-ink-muted dark:text-slate-400">Download is available in exports center.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const root = document.documentElement;
+    const toggle = document.getElementById("theme-toggle");
+    const icon = document.getElementById("theme-icon");
+    const label = document.getElementById("theme-label");
+
+    function syncThemeLabel() {
+      const isDark = root.classList.contains("dark");
+      icon.textContent = isDark ? "light_mode" : "dark_mode";
+      label.textContent = isDark ? "Light mode" : "Dark mode";
+    }
+
+    syncThemeLabel();
+
+    toggle.addEventListener("click", () => {
+      root.classList.toggle("dark");
+      localStorage.setItem(
+        "admin-design-theme",
+        root.classList.contains("dark") ? "dark" : "light"
+      );
+      syncThemeLabel();
+    });
+
+    if (window.jQuery && window.jQuery.fn && window.jQuery.fn.summernote) {
+      window.jQuery(function () {
+        window.jQuery("#summernote-minimal").summernote({
+          placeholder: "Write a short operational note...",
+          tabsize: 2,
+          height: 220,
+          toolbar: [
+            ["style", ["bold", "italic", "underline"]],
+            ["para", ["ul", "ol", "paragraph"]],
+            ["insert", ["link"]],
+            ["view", ["undo", "redo"]]
+          ]
+        });
+
+        window.jQuery("#summernote-full").summernote({
+          placeholder: "Create rich CMS content...",
+          tabsize: 2,
+          height: 320,
+          toolbar: [
+            ["style", ["style"]],
+            ["font", ["bold", "italic", "underline", "clear"]],
+            ["fontname", ["fontname"]],
+            ["color", ["color"]],
+            ["para", ["ul", "ol", "paragraph"]],
+            ["table", ["table"]],
+            ["insert", ["link", "picture", "video"]],
+            ["view", ["fullscreen", "codeview", "help"]],
+            ["history", ["undo", "redo"]]
+          ]
+        });
+      });
+    }
+  </script>
+</body>
+</html>
