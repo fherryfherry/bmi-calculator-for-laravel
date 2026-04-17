@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Calculate your Body Mass Index (BMI) instantly with our free BMI calculator">
     <title>@yield('title', 'BMI Calculator') - Health Tracker</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     
     <!-- Social Meta Tags (Open Graph) -->
     <meta property="og:type" content="website">
