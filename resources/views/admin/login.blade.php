@@ -101,6 +101,8 @@
             });
         }
     </script>
-    @include('ai-agent-helper::metadata-script')
+    @if (view()->exists('ai-agent-helper::metadata-script'))
+        @include('ai-agent-helper::metadata-script')
+    @endif
 </body>
 </html>
